@@ -33,3 +33,19 @@ Para o fluxo de matrícula, onde a concorrência é alta (múltiplos alunos tent
 
 - **PrimeNG**: Selecionado pela maturidade e vasta gama de componentes complexos (Table, Dialog, MultiSelect) que agilizam o desenvolvimento de dashboards administrativos.
 - **Aesthetics**: Segue a paleta de cores institucional sugerida, com foco em usabilidade e feedback instantâneo (Toasts).
+
+## 6. Trade-offs e Limitações
+
+- **Validação de Conflito de Horário**: Atualmente valida apenas por ID do horário. 
+  Uma melhoria seria validar sobreposição de horários reais (hora_inicio/hora_fim) para suportar horários de durações variáveis ou turnos quebrados.
+  
+- **Soft Delete**: Implementado via flag `deleted` na entidade `MatrizCurricular`. 
+  Isso evita a perda de integridade referencial com o histórico de matrículas, permitindo que o aluno ainda veja dados de aulas passadas que foram "removidas" do catálogo atual.
+
+## 7. O que faria com mais tempo
+
+- **Paginação**: Implementar paginação nas listagens de matriz e matrículas para suportar grandes volumes de dados.
+- **Cache**: Adicionar cache (ex: Redis ou Caffeine) para dados de referência (disciplinas, professores, cursos) que mudam raramente.
+- **Testes E2E**: Criar testes de ponta a ponta com Cypress ou Playwright para garantir os fluxos principais (login -> matrícula).
+- **CI/CD**: Configurar pipeline de GitHub Actions para rodar testes e builds automaticamente.
+- **Monitoramento**: Adicionar Prometheus e Grafana para métricas de performance da API.
