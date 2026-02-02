@@ -3,12 +3,22 @@ package br.edu.unifor.api.dto
 import br.edu.unifor.domain.model.DiaSemana
 import br.edu.unifor.domain.model.Periodo
 import java.time.LocalTime
+import jakarta.validation.constraints.*
 
 data class MatrizCurricularRequest(
-    val disciplinaId: Long,
-    val professorId: Long,
-    val horarioId: Long,
+    @field:NotNull(message = "Disciplina é obrigatória")
+    val disciplinaId: Long?,
+    
+    @field:NotNull(message = "Professor é obrigatório")
+    val professorId: Long?,
+    
+    @field:NotNull(message = "Horário é obrigatório")
+    val horarioId: Long?,
+    
+    @field:Min(value = 1, message = "Máximo de alunos deve ser pelo menos 1")
     val maxAlunos: Int,
+    
+    @field:NotEmpty(message = "Pelo menos um curso deve ser autorizado")
     val cursosAutorizadosIds: List<Long>
 )
 
@@ -35,7 +45,8 @@ data class MatrizFiltroRequest(
 )
 
 data class MatriculaRequest(
-    val matrizCurricularId: Long
+    @field:NotNull(message = "ID da aula é obrigatório")
+    val matrizCurricularId: Long?
 )
 
 data class MatriculaResponse(
