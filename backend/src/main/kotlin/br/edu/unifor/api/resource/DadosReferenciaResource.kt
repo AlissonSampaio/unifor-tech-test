@@ -11,6 +11,10 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
+import org.eclipse.microprofile.openapi.annotations.Operation
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses
 
 @Path("/api/dados")
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,6 +36,7 @@ class DadosReferenciaResource {
 
     @GET
     @Path("/disciplinas")
+    @Operation(summary = "Lista todas as disciplinas", description = "Retorna o catálogo completo de disciplinas cadastradas.")
     fun listarDisciplinas(): List<DisciplinaResponse> {
         return disciplinaRepository.listAll().map { 
             DisciplinaResponse(it.id!!, it.codigo, it.nome, it.cargaHoraria) 
@@ -40,6 +45,7 @@ class DadosReferenciaResource {
 
     @GET
     @Path("/professores")
+    @Operation(summary = "Lista todos os professores", description = "Retorna a lista de todos os professores cadastrados no sistema.")
     fun listarProfessores(): List<ProfessorResponse> {
         return professorRepository.listAll().map { 
             ProfessorResponse(it.id!!, it.nome, it.email) 
@@ -48,6 +54,7 @@ class DadosReferenciaResource {
 
     @GET
     @Path("/horarios")
+    @Operation(summary = "Lista todos os horários", description = "Retorna os horários padrão da universidade (turnos e dias).")
     fun listarHorarios(): List<HorarioResponse> {
         return horarioRepository.listAll().map { 
             HorarioResponse(it.id!!, it.diaSemana, it.horaInicio, it.horaFim, it.periodo) 
@@ -57,6 +64,11 @@ class DadosReferenciaResource {
     @GET
     @Path("/cursos")
     @RolesAllowed("COORDENADOR")
+    @Operation(summary = "Lista cursos gerenciados", description = "Retorna apenas os cursos que o coordenador autenticado tem permissão para gerenciar.")
+    @APIResponses(
+        APIResponse(responseCode = "200", description = "Cursos retornados com sucesso"),
+        APIResponse(responseCode = "403", description = "Acesso negado")
+    )
     fun listarCursos(): List<CursoResponse> {
         val keycloakId = securityIdentity.principal.name
         val coordenador = coordenadorRepository.findByKeycloakId(keycloakId)

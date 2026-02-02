@@ -31,9 +31,9 @@ class MatriculaService {
         // Lock pessimista na matriz para evitar race condition de vagas
         val matriz = em.find(
             MatrizCurricular::class.java,
-            request.matrizCurricularId,
+            request.matrizCurricularId!!,
             LockModeType.PESSIMISTIC_WRITE
-        ) ?: throw NotFoundException("MatrizCurricular", request.matrizCurricularId)
+        ) ?: throw NotFoundException("MatrizCurricular", request.matrizCurricularId!!)
 
         if (matriz.deleted) {
             throw BusinessException("Aula não disponível", "AULA_INDISPONIVEL")
