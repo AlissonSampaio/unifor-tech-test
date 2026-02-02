@@ -1,0 +1,2 @@
+-- Arquivo de inicialização do banco de dados
+-- O Hibernate criará o schema automaticamente, este arquivo será usado para seed de dados futuramente.

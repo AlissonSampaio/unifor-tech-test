@@ -1,0 +1,177 @@
+{
+  "id": "unifor",
+  "realm": "unifor",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "backend",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "backend-secret",
+      "serviceAccountsEnabled": true,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true
+    },
+    {
+      "clientId": "portal",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ],
+      "fullScopeAllowed": true
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "COORDENADOR"
+      },
+      {
+        "name": "ALUNO"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "coord1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Ana",
+      "lastName": "Costa",
+      "email": "ana.costa@unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "coord123"
+        }
+      ],
+      "realmRoles": [
+        "COORDENADOR"
+      ]
+    },
+    {
+      "username": "coord2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Bruno",
+      "lastName": "Lima",
+      "email": "bruno.lima@unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "coord123"
+        }
+      ],
+      "realmRoles": [
+        "COORDENADOR"
+      ]
+    },
+    {
+      "username": "coord3",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Carla",
+      "lastName": "Souza",
+      "email": "carla.souza@unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "coord123"
+        }
+      ],
+      "realmRoles": [
+        "COORDENADOR"
+      ]
+    },
+    {
+      "username": "aluno1",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Felipe",
+      "lastName": "Rodrigues",
+      "email": "felipe@edu.unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "aluno123"
+        }
+      ],
+      "realmRoles": [
+        "ALUNO"
+      ]
+    },
+    {
+      "username": "aluno2",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gabriela",
+      "lastName": "Costa",
+      "email": "gabriela@edu.unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "aluno123"
+        }
+      ],
+      "realmRoles": [
+        "ALUNO"
+      ]
+    },
+    {
+      "username": "aluno3",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Henrique",
+      "lastName": "Lima",
+      "email": "henrique@edu.unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "aluno123"
+        }
+      ],
+      "realmRoles": [
+        "ALUNO"
+      ]
+    },
+    {
+      "username": "aluno4",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Isabella",
+      "lastName": "Souza",
+      "email": "isabella@edu.unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "aluno123"
+        }
+      ],
+      "realmRoles": [
+        "ALUNO"
+      ]
+    },
+    {
+      "username": "aluno5",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "João",
+      "lastName": "Ferreira",
+      "email": "joao.f@edu.unifor.br",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "aluno123"
+        }
+      ],
+      "realmRoles": [
+        "ALUNO"
+      ]
+    }
+  ]
+}
