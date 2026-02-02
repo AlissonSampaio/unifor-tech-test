@@ -94,4 +94,69 @@ class MatrizCurricularServiceTest {
             service.excluir(1L, "coord1")
         }
     }
+
+    @Test
+    fun `deve falhar ao atualizar matriz de outro coordenador`() {
+        val coordCriador = Coordenador().apply { id = 1L }
+        val coordEditando = Coordenador().apply { id = 2L }
+        val matriz = MatrizCurricular().apply { id = 10L; coordenador = coordCriador }
+
+        `when`(repository.findById(10L)).thenReturn(matriz)
+        `when`(coordenadorRepository.findByKeycloakId("coord2")).thenReturn(coordEditando)
+
+        val request = MatrizCurricularRequest(1L, 1L, 1L, 30, listOf(1L))
+        assertThrows(BusinessException::class.java) {
+            service.atualizar(10L, request, "coord2")
+        }
+    }
+
+    @Test
+    fun `deve fazer soft delete corretamente`() {
+        val coord = Coordenador().apply { id = 1L }
+        val matriz = MatrizCurricular().apply { id = 1L; coordenador = coord; deleted = false }
+
+        `when`(repository.findById(1L)).thenReturn(matriz)
+        `when`(coordenadorRepository.findByKeycloakId(anyString())).thenReturn(coord)
+        `when`(matriculaRepository.countByMatrizId(1L)).thenReturn(0L)
+
+        service.excluir(1L, "coord1")
+
+        assertTrue(matriz.deleted)
+        verify(repository).persist(matriz)
+    }
+
+    @Test
+    fun `nao deve permitir remover curso com alunos matriculados na atualizacao`() {
+        val curso1 = Curso().apply { id = 1L; nome = "CC" }
+        val curso2 = Curso().apply { id = 2L; nome = "SI" }
+        val coord = Coordenador().apply { id = 1L }
+        val disc = Disciplina().apply { id = 1L }
+        val prof = Professor().apply { id = 1L }
+        val hor = Horario().apply { id = 1L }
+        
+        val matriz = MatrizCurricular().apply { 
+            id = 1L
+            coordenador = coord
+            disciplina = disc
+            cursosAutorizados = mutableListOf(curso1, curso2)
+        }
+
+        `when`(repository.findById(1L)).thenReturn(matriz)
+        `when`(coordenadorRepository.findByKeycloakId(anyString())).thenReturn(coord)
+        `when`(professorRepository.findById(anyLong())).thenReturn(prof)
+        `when`(horarioRepository.findById(anyLong())).thenReturn(hor)
+        `when`(cursoRepository.findById(2L)).thenReturn(curso2)
+        
+        // Mock matriculas para aluno do curso 1
+        val aluno = Aluno().apply { curso = curso1 }
+        val matricula = Matricula().apply { this.aluno = aluno }
+        `when`(matriculaRepository.list(anyString(), anyLong())).thenReturn(listOf(matricula))
+
+        // Request tentando remover curso 1 (deixando só curso 2)
+        val request = MatrizCurricularRequest(1L, 1L, 1L, 30, listOf(2L))
+
+        assertThrows(ConflictException::class.java) {
+            service.atualizar(1L, request, "coord1")
+        }
+    }
 }
