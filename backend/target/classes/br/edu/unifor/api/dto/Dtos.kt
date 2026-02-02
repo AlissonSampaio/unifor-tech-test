@@ -33,3 +33,27 @@ data class MatrizFiltroRequest(
     val horaInicio: LocalTime?,
     val horaFim: LocalTime?
 )
+
+data class MatriculaRequest(
+    val matrizCurricularId: Long
+)
+
+data class MatriculaResponse(
+    val id: Long,
+    val disciplina: String,
+    val professor: String,
+    val horario: String,
+    val dataMatricula: java.time.LocalDateTime
+)
+
+data class AulaDisponivelResponse(
+    val id: Long,
+    val disciplina: DisciplinaResponse,
+    val professor: ProfessorResponse,
+    val horario: HorarioResponse,
+    val maxAlunos: Int,
+    val vagasDisponiveis: Int,
+    val conflitaHorario: Boolean,
+    val jaMatriculado: Boolean,
+    val podeMatricular: Boolean
+)
