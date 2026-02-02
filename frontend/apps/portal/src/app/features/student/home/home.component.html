@@ -1,0 +1,72 @@
+<div class="grid">
+    <div class="col-12 xl:col-7">
+        <p-card header="Aulas Disponíveis para seu Curso">
+            <p-table [value]="(aulasDisponiveis$ | async) || []" styleClass="p-datatable-sm">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Disciplina</th>
+                        <th>Professor</th>
+                        <th>Horário</th>
+                        <th>Vagas</th>
+                        <th>Ação</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-aula>
+                    <tr [class.opacity-50]="!aula.podeMatricular">
+                        <td class="font-bold">{{ aula.disciplina.nome }}</td>
+                        <td>{{ aula.professor.nome }}</td>
+                        <td>{{ formatarHorario(aula.horario) }}</td>
+                        <td>
+                            <p-tag [severity]="aula.vagasDisponiveis > 0 ? 'success' : 'danger'" [value]="aula.vagasDisponiveis + ' / ' + aula.maxAlunos"></p-tag>
+                        </td>
+                        <td>
+                            <p-button 
+                                label="Matricular" 
+                                icon="pi pi-check"
+                                [disabled]="!aula.podeMatricular"
+                                [loading]="matriculando === aula.id"
+                                (click)="matricular(aula)"
+                                [pTooltip]="getTooltip(aula)"
+                                tooltipPosition="left">
+                            </p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5" class="text-center p-4">Nenhuma aula disponível encontrada.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-card>
+    </div>
+
+    <div class="col-12 xl:col-5">
+        <p-card header="Minhas Matrículas">
+            <p-table [value]="(minhasMatriculas$ | async) || []">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Disciplina</th>
+                        <th>Professor</th>
+                        <th>Horário</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-matricula>
+                    <tr>
+                        <td class="font-bold text-primary">{{ matricula.disciplina }}</td>
+                        <td>{{ matricula.professor }}</td>
+                        <td>{{ matricula.horario }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="text-center p-4 text-500">
+                            <i class="pi pi-info-circle mr-2"></i>
+                            Você ainda não realizou nenhuma matrícula.
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-card>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+<div class="card">
+    <div class="flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0">Gestão da Matriz Curricular</h2>
+        <p-button label="Nova Aula" icon="pi pi-plus" (click)="showDialog()"></p-button>
+    </div>
+
+    <!-- Filtros -->
+    <div [formGroup]="filtroForm" class="flex gap-3 mb-4 p-3 surface-ground border-round">
+        <div class="flex flex-column gap-1">
+            <label class="font-bold">Período</label>
+            <p-dropdown [options]="periodos" formControlName="periodo" placeholder="Todos" [showClear]="true"></p-dropdown>
+        </div>
+        <div class="flex flex-column gap-1">
+            <label class="font-bold">Curso</label>
+            <p-dropdown [options]="(cursos$ | async) || []" formControlName="cursoId" optionLabel="nome" optionValue="id" placeholder="Todos" [showClear]="true"></p-dropdown>
+        </div>
+    </div>
+
+    <p-table [value]="(matrizes$ | async) || []" [loading]="loading" styleClass="p-datatable-striped">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Disciplina</th>
+                <th>Professor</th>
+                <th>Horário</th>
+                <th>Vagas</th>
+                <th>Cursos Autorizados</th>
+                <th>Ações</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-matriz>
+            <tr>
+                <td>{{ matriz.disciplina.nome }}</td>
+                <td>{{ matriz.professor.nome }}</td>
+                <td>{{ matriz.horario.diaSemana }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}</td>
+                <td>
+                    <span [class]="matriz.vagasDisponiveis > 0 ? 'text-green-500' : 'text-red-500 font-bold'">
+                        {{ matriz.vagasDisponiveis }} / {{ matriz.maxAlunos }}
+                    </span>
+                </td>
+                <td>
+                    <div class="flex flex-wrap gap-1">
+                        <span *ngFor="let c of matriz.cursosAutorizados" class="text-xs p-1 surface-200 border-round">
+                            {{ c.codigo }}
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <div class="flex gap-1">
+                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (click)="editar(matriz)"></p-button>
+                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (click)="confirmarExclusao(matriz)"></p-button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="6" class="text-center p-4">Nenhuma aula encontrada para os filtros selecionados.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- Formulário -->
+<p-dialog [(visible)]="displayForm" [header]="editingId ? 'Editar Aula' : 'Nova Aula'" [modal]="true" [style]="{width: '450px'}">
+    <form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-column gap-3 mt-3">
+        <div class="flex flex-column gap-1">
+            <label for="disciplina" class="font-bold">Disciplina</label>
+            <p-dropdown id="disciplina" [options]="(disciplinas$ | async) || []" formControlName="disciplinaId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-dropdown>
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label for="professor" class="font-bold">Professor</label>
+            <p-dropdown id="professor" [options]="(professores$ | async) || []" formControlName="professorId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-dropdown>
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label for="horario" class="font-bold">Horário</label>
+            <p-dropdown id="horario" [options]="(horarios$ | async) || []" formControlName="horarioId" placeholder="Selecione">
+                <ng-template let-h pTemplate="item">
+                    {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
+                </ng-template>
+                <ng-template let-h pTemplate="selectedItem">
+                    {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }}
+                </ng-template>
+            </p-dropdown>
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label for="maxAlunos" class="font-bold">Máximo de Alunos</label>
+            <p-inputNumber id="maxAlunos" formControlName="maxAlunos" [min]="1" showButtons="true"></p-inputNumber>
+        </div>
+
+        <div class="flex flex-column gap-1">
+            <label for="cursos" class="font-bold">Cursos Autorizados</label>
+            <p-multiSelect id="cursos" [options]="(cursos$ | async) || []" formControlName="cursosAutorizadosIds" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-multiSelect>
+        </div>
+
+        <div class="flex justify-content-end gap-2 mt-4">
+            <p-button label="Cancelar" severity="secondary" [text]="true" (click)="displayForm = false"></p-button>
+            <p-button label="Salvar" type="submit" [disabled]="form.invalid"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>

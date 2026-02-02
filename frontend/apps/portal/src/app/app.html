@@ -1,0 +1,13 @@
+<div class="layout-wrapper">
+  <p-menubar [model]="items">
+    <ng-template pTemplate="start">
+      <img src="https://www.unifor.br/documents/logo_unifor.png" height="40" class="mr-2" alt="Logo Unifor">
+    </ng-template>
+  </p-menubar>
+  
+  <main class="p-4 overflow-auto" style="height: calc(100vh - 70px);">
+    <router-outlet></router-outlet>
+  </main>
+
+  <p-toast></p-toast>
+</div>
