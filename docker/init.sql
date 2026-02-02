@@ -20,15 +20,15 @@ INSERT INTO professor (id, nome, email) VALUES
 
 -- Horarios (9)
 INSERT INTO horario (id, dia_semana, hora_inicio, hora_fim, periodo) VALUES
-(1, 0, '07:30', '09:10', 0), -- SEGUNDA, MANHA
-(2, 0, '09:20', '11:00', 0), -- SEGUNDA, MANHA
-(3, 0, '11:10', '12:50', 0), -- SEGUNDA, MANHA
-(4, 1, '13:30', '15:10', 1), -- TERCA, TARDE
-(5, 1, '15:20', '17:00', 1), -- TERCA, TARDE
-(6, 1, '17:10', '18:50', 1), -- TERCA, TARDE
-(7, 2, '19:00', '20:40', 2), -- QUARTA, NOITE
-(8, 2, '20:50', '22:30', 2), -- QUARTA, NOITE
-(9, 3, '19:00', '20:40', 2); -- QUINTA, NOITE
+(1, 'SEGUNDA', '07:30', '09:10', 'MANHA'),
+(2, 'SEGUNDA', '09:20', '11:00', 'MANHA'),
+(3, 'SEGUNDA', '11:10', '12:50', 'MANHA'),
+(4, 'TERCA', '13:30', '15:10', 'TARDE'),
+(5, 'TERCA', '15:20', '17:00', 'TARDE'),
+(6, 'TERCA', '17:10', '18:50', 'TARDE'),
+(7, 'QUARTA', '19:00', '20:40', 'NOITE'),
+(8, 'QUARTA', '20:50', '22:30', 'NOITE'),
+(9, 'QUINTA', '19:00', '20:40', 'NOITE');
 
 -- Disciplinas (15)
 INSERT INTO disciplina (id, codigo, nome, carga_horaria) VALUES
