@@ -38,6 +38,7 @@
   },
   "users": [
     {
+      "id": "coord1",
       "username": "coord1",
       "enabled": true,
       "emailVerified": true,
@@ -55,6 +56,7 @@
       ]
     },
     {
+      "id": "coord2",
       "username": "coord2",
       "enabled": true,
       "emailVerified": true,
@@ -72,6 +74,7 @@
       ]
     },
     {
+      "id": "coord3",
       "username": "coord3",
       "enabled": true,
       "emailVerified": true,
@@ -89,6 +92,7 @@
       ]
     },
     {
+      "id": "aluno1",
       "username": "aluno1",
       "enabled": true,
       "emailVerified": true,
@@ -106,6 +110,7 @@
       ]
     },
     {
+      "id": "aluno2",
       "username": "aluno2",
       "enabled": true,
       "emailVerified": true,
@@ -123,6 +128,7 @@
       ]
     },
     {
+      "id": "aluno3",
       "username": "aluno3",
       "enabled": true,
       "emailVerified": true,
@@ -140,6 +146,7 @@
       ]
     },
     {
+      "id": "aluno4",
       "username": "aluno4",
       "enabled": true,
       "emailVerified": true,
@@ -157,6 +164,7 @@
       ]
     },
     {
+      "id": "aluno5",
       "username": "aluno5",
       "enabled": true,
       "emailVerified": true,
