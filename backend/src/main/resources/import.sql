@@ -67,5 +67,12 @@ INSERT INTO aluno (id, matricula, nome, email, keycloak_id, curso_id) VALUES (3,
 INSERT INTO aluno (id, matricula, nome, email, keycloak_id, curso_id) VALUES (4, '2024004', 'Isabella Souza', 'isabella@edu.unifor.br', 'aluno4', 7);
 INSERT INTO aluno (id, matricula, nome, email, keycloak_id, curso_id) VALUES (5, '2024005', 'João Ferreira', 'joao.f@edu.unifor.br', 'aluno5', 8);
 
--- Reset sequence for Hibernate (hibernate_sequence is default name)
-SELECT setval('hibernate_sequence', 100);
+-- Reset sequences for Hibernate (Individual sequences created by Quarkus/Hibernate)
+SELECT setval('aluno_SEQ', 100);
+SELECT setval('coordenador_SEQ', 100);
+SELECT setval('curso_SEQ', 100);
+SELECT setval('disciplina_SEQ', 100);
+SELECT setval('horario_SEQ', 100);
+SELECT setval('matricula_SEQ', 100);
+SELECT setval('matriz_curricular_SEQ', 100);
+SELECT setval('professor_SEQ', 100);

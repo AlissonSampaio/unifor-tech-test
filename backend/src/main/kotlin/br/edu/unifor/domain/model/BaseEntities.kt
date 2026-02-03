@@ -1,9 +1,7 @@
 package br.edu.unifor.domain.model
 
 import io.quarkus.hibernate.orm.panache.kotlin.PanacheEntity
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
+import jakarta.persistence.*
 
 @Entity
 @Table(name = "curso")
@@ -41,6 +39,7 @@ class Professor : PanacheEntity() {
 @Entity
 @Table(name = "horario")
 class Horario : PanacheEntity() {
+    @Enumerated(EnumType.STRING)
     @Column(name = "dia_semana", nullable = false)
     lateinit var diaSemana: DiaSemana
 
@@ -50,6 +49,7 @@ class Horario : PanacheEntity() {
     @Column(name = "hora_fim", nullable = false)
     lateinit var horaFim: java.time.LocalTime
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     lateinit var periodo: Periodo
 }
