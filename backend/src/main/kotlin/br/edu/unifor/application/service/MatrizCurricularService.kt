@@ -32,14 +32,17 @@ class MatrizCurricularService {
         val coordenador = coordenadorRepository.findByKeycloakId(keycloakId)
             ?: throw ForbiddenException("Coordenador não encontrado para o usuário logado")
 
-        val disciplina = disciplinaRepository.findById(request.disciplinaId!!)
-            ?: throw NotFoundException("Disciplina", request.disciplinaId!!)
+        val discId = request.disciplinaId!!
+        val disciplina = disciplinaRepository.findById(discId)
+            ?: throw NotFoundException("Disciplina", discId)
 
-        val professor = professorRepository.findById(request.professorId!!)
-            ?: throw NotFoundException("Professor", request.professorId!!)
+        val profId = request.professorId!!
+        val professor = professorRepository.findById(profId)
+            ?: throw NotFoundException("Professor", profId)
 
-        val horario = horarioRepository.findById(request.horarioId!!)
-            ?: throw NotFoundException("Horário", request.horarioId!!)
+        val horId = request.horarioId!!
+        val horario = horarioRepository.findById(horId)
+            ?: throw NotFoundException("Horário", horId)
 
         val cursos = request.cursosAutorizadosIds.map { cursoId ->
             val curso = cursoRepository.findById(cursoId) ?: throw NotFoundException("Curso", cursoId)
@@ -93,11 +96,13 @@ class MatrizCurricularService {
             throw BusinessException("Não é permitido alterar a disciplina de uma aula existente", "DISCIPLINA_UNMODIFIABLE")
         }
 
-        val professor = professorRepository.findById(request.professorId!!)
-            ?: throw NotFoundException("Professor", request.professorId!!)
+        val profId = request.professorId!!
+        val professor = professorRepository.findById(profId)
+            ?: throw NotFoundException("Professor", profId)
 
-        val horario = horarioRepository.findById(request.horarioId!!)
-            ?: throw NotFoundException("Horário", request.horarioId!!)
+        val horId = request.horarioId!!
+        val horario = horarioRepository.findById(horId)
+            ?: throw NotFoundException("Horário", horId)
 
         val novosCursos = request.cursosAutorizadosIds.map { cursoId ->
             cursoRepository.findById(cursoId) ?: throw NotFoundException("Curso", cursoId)

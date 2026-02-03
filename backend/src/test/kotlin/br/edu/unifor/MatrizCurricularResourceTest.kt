@@ -28,7 +28,7 @@ class MatrizCurricularResourceTest {
             .`when`().get()
             .then()
             .statusCode(200)
-            .body("$", hasSize(greaterThanOrEqualTo(0)))
+            .body("size()", greaterThanOrEqualTo(0))
     }
 
     @Test

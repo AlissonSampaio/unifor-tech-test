@@ -28,12 +28,13 @@ class MatriculaService {
         val aluno = alunoRepository.findByKeycloakId(keycloakId)
             ?: throw NotFoundException("Aluno", keycloakId)
 
+        val matrizId = request.matrizCurricularId!!
         // Lock pessimista na matriz para evitar race condition de vagas
         val matriz = em.find(
             MatrizCurricular::class.java,
-            request.matrizCurricularId!!,
+            matrizId,
             LockModeType.PESSIMISTIC_WRITE
-        ) ?: throw NotFoundException("MatrizCurricular", request.matrizCurricularId!!)
+        ) ?: throw NotFoundException("MatrizCurricular", matrizId)
 
         if (matriz.deleted) {
             throw BusinessException("Aula não disponível", "AULA_INDISPONIVEL")
