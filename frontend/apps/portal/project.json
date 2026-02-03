@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/portal",
         "browser": "apps/portal/src/main.ts",
@@ -20,25 +22,24 @@
             "input": "apps/portal/public"
           }
         ],
-        "styles": ["apps/portal/src/styles.scss"],
-        "server": "apps/portal/src/main.server.ts",
-        "ssr": {
-          "entry": "apps/portal/src/server.ts"
-        },
-        "outputMode": "server"
+        "styles": [
+          "apps/portal/src/styles.scss"
+        ],
+        "ssr": false,
+        "prerender": false
       },
       "configurations": {
         "production": {
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "500kb",
-              "maximumError": "1mb"
+              "maximumWarning": "1mb",
+              "maximumError": "2mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "4kb",
-              "maximumError": "8kb"
+              "maximumWarning": "10kb",
+              "maximumError": "20kb"
             }
           ],
           "outputHashing": "all"

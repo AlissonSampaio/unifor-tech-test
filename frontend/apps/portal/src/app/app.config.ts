@@ -19,7 +19,9 @@ export const appConfig: ApplicationConfig = {
       config: keycloakConfig,
       initOptions: {
         onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
+        silentCheckSsoRedirectUri: typeof window !== 'undefined' 
+          ? window.location.origin + '/assets/silent-check-sso.html'
+          : '/assets/silent-check-sso.html'
       }
     }),
     providePrimeNG({
