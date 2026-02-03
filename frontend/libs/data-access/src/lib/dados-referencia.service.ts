@@ -6,7 +6,7 @@ import { Curso, Disciplina, Horario, Professor } from './models';
 @Injectable({ providedIn: 'root' })
 export class DadosReferenciaService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/dados';
+  private apiUrl = '/api/dados';
 
   disciplinas$ = this.http.get<Disciplina[]>(`${this.apiUrl}/disciplinas`).pipe(shareReplay(1));
   professores$ = this.http.get<Professor[]>(`${this.apiUrl}/professores`).pipe(shareReplay(1));

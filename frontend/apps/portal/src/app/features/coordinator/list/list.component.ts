@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
-    DadosReferenciaService,
-    MatrizCurricular,
-    MatrizFiltro,
-    MatrizService,
-    Periodo
+  DadosReferenciaService,
+  MatrizCurricular,
+  MatrizFiltro,
+  MatrizService,
+  Periodo
 } from '@frontend/data-access';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -112,7 +112,9 @@ export class MatrizListComponent implements OnInit {
     const request = {
       disciplinaId: rawValue.disciplinaId!,
       professorId: rawValue.professorId!,
-      horarioId: rawValue.horarioId!,
+      horarioId: (typeof rawValue.horarioId === 'object' && rawValue.horarioId !== null) 
+          ? (rawValue.horarioId as any).id 
+          : rawValue.horarioId!,
       maxAlunos: rawValue.maxAlunos!,
       cursosAutorizadosIds: rawValue.cursosAutorizadosIds!
     };

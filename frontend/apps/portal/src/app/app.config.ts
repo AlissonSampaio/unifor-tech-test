@@ -1,12 +1,11 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
-import Aura from '@primeng/themes/aura';
+import Aura from '@primeuix/themes/aura';
 import { INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, includeBearerTokenInterceptor, provideKeycloak } from 'keycloak-angular';
 import { providePrimeNG } from 'primeng/config';
 
-import { keycloakConfig } from '@frontend/auth';
+import { AuthService, keycloakConfig } from '@frontend/auth';
 import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -14,14 +13,12 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
     provideHttpClient(withInterceptors([includeBearerTokenInterceptor])),
-    provideAnimationsAsync(),
+    AuthService,
     provideKeycloak({
       config: keycloakConfig,
       initOptions: {
-        onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: typeof window !== 'undefined' 
-          ? window.location.origin + '/assets/silent-check-sso.html'
-          : '/assets/silent-check-sso.html'
+        onLoad: 'login-required',
+        checkLoginIframe: false
       }
     }),
     providePrimeNG({
@@ -36,7 +33,7 @@ export const appConfig: ApplicationConfig = {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
       useValue: [
         {
-          urlPattern: /^http:\/\/localhost:8080\/api\/.*$/,
+          urlPattern: /^(?:https?:\/\/[^/]+)?\/api\/.*$/,
           httpMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
         }
       ]

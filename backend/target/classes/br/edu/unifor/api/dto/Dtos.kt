@@ -7,19 +7,19 @@ import jakarta.validation.constraints.*
 
 data class MatrizCurricularRequest(
     @field:NotNull(message = "Disciplina é obrigatória")
-    val disciplinaId: Long?,
+    val disciplinaId: Long? = null,
     
     @field:NotNull(message = "Professor é obrigatório")
-    val professorId: Long?,
+    val professorId: Long? = null,
     
     @field:NotNull(message = "Horário é obrigatório")
-    val horarioId: Long?,
+    val horarioId: Long? = null,
     
     @field:Min(value = 1, message = "Máximo de alunos deve ser pelo menos 1")
-    val maxAlunos: Int,
+    val maxAlunos: Int = 30,
     
     @field:NotEmpty(message = "Pelo menos um curso deve ser autorizado")
-    val cursosAutorizadosIds: List<Long>
+    val cursosAutorizadosIds: List<Long> = emptyList()
 )
 
 data class MatrizCurricularResponse(

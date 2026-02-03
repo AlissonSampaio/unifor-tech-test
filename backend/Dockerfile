@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B -Dmaven.wagon.http.retryHandler.count=5 || true
 
 # Copy source and build (removed -o to allow resolving missing dependencies)
 COPY src ./src
-RUN mvn package -DskipTests -B -Dmaven.wagon.http.retryHandler.count=5
+RUN mvn package -DskipTests -B -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app

@@ -65,6 +65,7 @@ class MatrizCurricularResource {
         APIResponse(responseCode = "403", description = "Sem permissão para gerenciar um dos cursos")
     )
     fun criar(@Valid request: MatrizCurricularRequest): Response {
+        println("RECEBENDO REQUEST CRIAR: $request")
         val keycloakId = securityIdentity.principal.name
         val created = service.criar(request, keycloakId)
         return Response.status(Response.Status.CREATED).entity(created).build()

@@ -1,72 +1,117 @@
 # Sistema de Matriz Curricular - Unifor
 
-Sistema full-stack para gerenciamento de matriz curricular e matrículas de alunos, desenvolvido como teste técnico.
+Sistema full-stack para gerenciamento de matriz curricular e matriculas de alunos.
 
-## 🚀 Tecnologias
+## Tecnologias
 
 ### Backend
-- **Kotlin 2.0+**
-- **Quarkus 3.15+** (Framework Java nativo do GraalVM)
-- **Hibernate Panache** (Camada de persistência simplificada)
-- **PostgreSQL 15** (Banco de dados)
-- **Keycloak 24** (Autenticação e Autorização OIDC)
+- Kotlin 2.0+ com Quarkus 3.15+
+- Hibernate Panache (ORM)
+- PostgreSQL 15
+- Keycloak 24 (OIDC)
 
 ### Frontend
-- **Angular 18+**
-- **Nx 22+** (Monorepo management)
-- **PrimeNG 21+** (Biblioteca de componentes UI)
-- **PrimeFlex** (Utilitários de CSS)
-- **RxJS** (Programação reativa)
+- Angular 19+ com Nx 22+
+- PrimeNG 21+ (UI Components)
+- RxJS (Programacao Reativa)
 
-## 🛠️ Pré-requisitos
+## Pre-requisitos
 
-- **Docker & Docker Compose**
-- **Java 17+** (JDK)
-- **Node.js 20+**
+- Docker e Docker Compose
+- Java 21+ (para desenvolvimento local)
+- Node.js 20+ (para desenvolvimento local)
 
-## 🏃 Como Executar
+## Execucao Rapida (Docker)
 
-### 1. Infraestrutura (Banco e Auth)
-Na raiz do projeto:
+Para executar todo o sistema com um unico comando:
+
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
-Aguarde os serviços subirem. O Keycloak importará automaticamente o realm `unifor`.
+
+Aguarde 2-3 minutos na primeira execucao. Acesse:
+
+- Frontend: [http://localhost:4200](http://localhost:4200)
+- Swagger: [http://localhost:8080/q/swagger-ui](http://localhost:8080/q/swagger-ui)
+- Keycloak: [http://localhost:8180](http://localhost:8180) (admin/admin)
+
+## Execucao para Desenvolvimento
+
+### 1. Subir Infraestrutura
+
+```bash
+docker-compose up postgres keycloak -d
+```
 
 ### 2. Backend
+
 ```bash
 cd backend
 ./mvnw quarkus:dev
 ```
-A API estará disponível em `http://localhost:8080`.
-Swagger UI: `http://localhost:8080/q/swagger-ui`.
 
 ### 3. Frontend
+
 ```bash
 cd frontend
-npm install
+npm install --legacy-peer-deps
 npx nx serve portal
 ```
-Acesse `http://localhost:4200`.
 
-## 👥 Credenciais de Teste
+## Credenciais de Teste
 
-| Usuário | Senha | Perfil | Curso/Gerencia |
-|---------|-------|--------|----------------|
-| `coord1`| `coord123` | Coordenador | CC, SI, ES |
-| `coord2`| `coord123` | Coordenador | EC, EM, EE |
-| `aluno1`| `aluno123` | Aluno | Ciência da Computação |
-| `aluno2`| `aluno123` | Aluno | Sistemas de Informação |
 
-## 🏗️ Estrutura do Monorepo
+| Usuario | Senha    | Perfil      | Cursos                 |
+| ------- | -------- | ----------- | ---------------------- |
+| coord1  | coord123 | Coordenador | CC, SI, ES             |
+| coord2  | coord123 | Coordenador | EC, EM, EE             |
+| coord3  | coord123 | Coordenador | ADM, DIR, MED          |
+| aluno1  | aluno123 | Aluno       | Ciencia da Computacao  |
+| aluno2  | aluno123 | Aluno       | Sistemas de Informacao |
+| aluno3  | aluno123 | Aluno       | Engenharia de Software |
+| aluno4  | aluno123 | Aluno       | Administracao          |
+| aluno5  | aluno123 | Aluno       | Direito                |
 
-- `backend/`: Projeto Quarkus com arquitetura em camadas.
-- `frontend/`: Workspace Nx contendo:
-  - `apps/portal`: Aplicação Angular principal.
-  - `libs/auth`: Biblioteca de integração com Keycloak e Guards.
-  - `libs/data-access`: Camada de serviços e modelos de API.
-  - `libs/shared`: Componentes compartilhados.
 
-## 📝 Decisões Técnicas
+## Estrutura do Projeto
 
-As principais decisões técnicas estão documentadas no arquivo [DECISOES_TECNICAS.md](./DECISOES_TECNICAS.md).
+```
+/
+├── backend/           # Quarkus (Kotlin)
+│   └── src/main/kotlin/br/edu/unifor/
+│       ├── api/       # REST Resources e DTOs
+│       ├── application/  # Services e Regras de Negocio
+│       ├── domain/    # Entidades e Repositorios
+│       └── infrastructure/  # Config Global
+├── frontend/          # Nx Workspace (Angular)
+│   ├── apps/portal/   # Aplicacao Principal
+│   └── libs/
+│       ├── auth/      # Integracao Keycloak
+│       ├── data-access/  # Services de API
+│       └── shared/    # Componentes Comuns
+├── docker/            # Configuracoes Docker
+│   └── keycloak/      # Realm Export
+└── docker-compose.yml
+```
+
+## Testes
+
+### Backend
+
+```bash
+cd backend
+./mvnw test
+```
+
+### Frontend
+
+```bash
+cd frontend
+npx nx test auth
+npx nx test data-access
+```
+
+## Documentacao Adicional
+
+- [Decisoes Tecnicas](./DECISOES_TECNICAS.md)
+- [Swagger UI](http://localhost:8080/q/swagger-ui) (com backend rodando)

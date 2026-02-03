@@ -49,3 +49,21 @@ Para o fluxo de matrícula, onde a concorrência é alta (múltiplos alunos tent
 - **Testes E2E**: Criar testes de ponta a ponta com Cypress ou Playwright para garantir os fluxos principais (login -> matrícula).
 - **CI/CD**: Configurar pipeline de GitHub Actions para rodar testes e builds automaticamente.
 - **Monitoramento**: Adicionar Prometheus e Grafana para métricas de performance da API.
+
+## 8. Desafios Encontrados e Solucoes
+
+### 8.1 Sincronizacao Keycloak-Banco
+**Problema**: Os IDs dos usuarios no Keycloak eram gerados automaticamente, nao correspondendo ao `keycloak_id` no banco.
+**Solucao**: Definir IDs fixos no `realm-export.json` que correspondem exatamente aos valores em `import.sql`.
+
+### 8.2 OIDC em Ambiente Dual (Docker + Local)
+**Problema**: O issuer do token JWT difere entre execucao local (localhost:8180) e Docker (keycloak:8080).
+**Solucao**: Configurar `quarkus.oidc.token.issuer` separado do `auth-server-url`.
+
+### 8.3 PrimeNG v21 Breaking Changes
+**Problema**: Migracao de PrimeNG v17 para v21 quebrou varios componentes.
+**Solucao**: Substituir `DropdownModule` por `SelectModule` e usar nova API de temas com `@primeuix/themes`.
+
+### 8.4 Angular SSR com Keycloak
+**Problema**: Server-Side Rendering falha porque Keycloak precisa de `window`.
+**Solucao**: Desabilitar prerendering no `project.json` do portal.

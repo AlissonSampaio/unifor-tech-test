@@ -29,7 +29,6 @@ class MatriculaService {
             ?: throw NotFoundException("Aluno", keycloakId)
 
         val matrizId = request.matrizCurricularId!!
-        // Lock pessimista na matriz para evitar race condition de vagas
         val matriz = em.find(
             MatrizCurricular::class.java,
             matrizId,

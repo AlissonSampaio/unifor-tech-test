@@ -1,13 +1,13 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { KeycloakService } from 'keycloak-angular';
+import Keycloak from 'keycloak-js';
 
 export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
   return async (route, state) => {
-    const keycloak = inject(KeycloakService);
+    const keycloak = inject(Keycloak);
     const router = inject(Router);
 
-    const authenticated = await keycloak.isLoggedIn();
+    const authenticated = !!keycloak.authenticated;
 
     if (!authenticated) {
       await keycloak.login({
@@ -16,11 +16,10 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
       return false;
     }
 
-    const roles = keycloak.getUserRoles();
+    const roles = keycloak.realmAccess?.roles || [];
     const hasRole = allowedRoles.some((role) => roles.includes(role));
 
     if (!hasRole) {
-      // Redireciona para home ou mostra página de acesso negado
       await router.navigate(['/']);
       return false;
     }

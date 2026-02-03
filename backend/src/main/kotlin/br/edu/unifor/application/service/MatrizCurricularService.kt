@@ -52,7 +52,6 @@ class MatrizCurricularService {
             curso
         }
 
-
         val matriz = MatrizCurricular().apply {
             this.disciplina = disciplina
             this.professor = professor
@@ -65,7 +64,8 @@ class MatrizCurricularService {
         }
 
         repository.persist(matriz)
-        return toResponse(matriz)
+        repository.flush()
+        return toResponse(matriz, 0L)
     }
 
     fun listar(filtro: MatrizFiltroRequest, keycloakId: String): List<MatrizCurricularResponse> {
@@ -124,6 +124,7 @@ class MatrizCurricularService {
         matriz.cursosAutorizados = novosCursos.toMutableList()
 
         repository.persist(matriz)
+        repository.flush()
         return toResponse(matriz)
     }
 
@@ -146,8 +147,8 @@ class MatrizCurricularService {
         repository.persist(matriz)
     }
 
-    private fun toResponse(m: MatrizCurricular): MatrizCurricularResponse {
-        val matriculados = matriculaRepository.countByMatrizId(m.id!!)
+    private fun toResponse(m: MatrizCurricular, matriculadosCount: Long? = null): MatrizCurricularResponse {
+        val matriculados = matriculadosCount ?: matriculaRepository.countByMatrizId(m.id!!)
         return MatrizCurricularResponse(
             id = m.id!!,
             disciplina = DisciplinaResponse(m.disciplina.id!!, m.disciplina.codigo, m.disciplina.nome, m.disciplina.cargaHoraria),

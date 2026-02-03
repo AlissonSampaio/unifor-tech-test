@@ -1,0 +1,19 @@
+# Logs
+*.log
+backend_logs.txt
+
+# Arquivos temporarios
+git-history-visual.html
+
+# IDE
+.idea/
+*.iml
+
+# Build
+backend/target/
+frontend/dist/
+frontend/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

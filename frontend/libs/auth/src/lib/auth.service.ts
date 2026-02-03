@@ -1,26 +1,25 @@
 import { inject, Injectable } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
-import { KeycloakProfile } from 'keycloak-js';
+import Keycloak from 'keycloak-js';
 import { from, Observable, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private keycloak = inject(KeycloakService);
+  private keycloak = inject(Keycloak);
 
   get isLoggedIn$(): Observable<boolean> {
-    return of(this.keycloak.isLoggedIn());
+    return of(!!this.keycloak.authenticated);
   }
 
-  get userProfile$(): Observable<KeycloakProfile | null> {
+  get userProfile$(): Observable<any> {
     return from(this.keycloak.loadUserProfile());
   }
 
   get roles(): string[] {
-    return this.keycloak.getUserRoles();
+    return this.keycloak.realmAccess?.roles || [];
   }
 
   get token(): string {
-    return this.keycloak.getKeycloakInstance().token || '';
+    return this.keycloak.token || '';
   }
 
   isCoordinator(): boolean {
@@ -36,6 +35,6 @@ export class AuthService {
   }
 
   logout(): void {
-    this.keycloak.logout(window.location.origin);
+    this.keycloak.logout({ redirectUri: window.location.origin });
   }
 }

@@ -52,10 +52,6 @@ class MatrizCurricularService {
             curso
         }
 
-        // Validação: mesma disciplina em horários diferentes é permitida, 
-        // mas vamos evitar duplicatas exatas se fizer sentido.
-        // O plano diz "Mesma disciplina pode existir em horários diferentes".
-
         val matriz = MatrizCurricular().apply {
             this.disciplina = disciplina
             this.professor = professor
@@ -68,7 +64,8 @@ class MatrizCurricularService {
         }
 
         repository.persist(matriz)
-        return toResponse(matriz)
+        repository.flush()
+        return toResponse(matriz, 0L)
     }
 
     fun listar(filtro: MatrizFiltroRequest, keycloakId: String): List<MatrizCurricularResponse> {
@@ -77,10 +74,8 @@ class MatrizCurricularService {
 
         val cursosIds = coordenador.cursosGerenciados.map { it.id!! }
         
-        // Filtra matrizes
         val matrizes = repository.findByFilters(filtro.periodo, filtro.cursoId, filtro.horaInicio, filtro.horaFim)
         
-        // Retorna apenas as que o coordenador pode ver (onde pelo menos um curso autorizado ele gerencia)
         return matrizes.filter { m ->
             m.cursosAutorizados.any { ca -> cursosIds.contains(ca.id) }
         }.map { toResponse(it) }
@@ -113,7 +108,6 @@ class MatrizCurricularService {
             cursoRepository.findById(cursoId) ?: throw NotFoundException("Curso", cursoId)
         }
 
-        // Se remover um curso, verificar se não há alunos matriculados daquele curso
         val cursosRemovidos = matriz.cursosAutorizados.filter { existing -> novosCursos.none { it.id == existing.id } }
         if (cursosRemovidos.isNotEmpty()) {
             val matriculas = matriculaRepository.list("matrizCurricular.id", id)
@@ -130,6 +124,7 @@ class MatrizCurricularService {
         matriz.cursosAutorizados = novosCursos.toMutableList()
 
         repository.persist(matriz)
+        repository.flush()
         return toResponse(matriz)
     }
 
@@ -152,8 +147,8 @@ class MatrizCurricularService {
         repository.persist(matriz)
     }
 
-    private fun toResponse(m: MatrizCurricular): MatrizCurricularResponse {
-        val matriculados = matriculaRepository.countByMatrizId(m.id!!)
+    private fun toResponse(m: MatrizCurricular, matriculadosCount: Long? = null): MatrizCurricularResponse {
+        val matriculados = matriculadosCount ?: matriculaRepository.countByMatrizId(m.id!!)
         return MatrizCurricularResponse(
             id = m.id!!,
             disciplina = DisciplinaResponse(m.disciplina.id!!, m.disciplina.codigo, m.disciplina.nome, m.disciplina.cargaHoraria),
