@@ -8,11 +8,11 @@
     <div [formGroup]="filtroForm" class="flex gap-3 mb-4 p-3 surface-ground border-round">
         <div class="flex flex-column gap-1">
             <label class="font-bold">Período</label>
-            <p-dropdown [options]="periodos" formControlName="periodo" placeholder="Todos" [showClear]="true"></p-dropdown>
+            <p-select [options]="periodos" formControlName="periodo" placeholder="Todos" [showClear]="true"></p-select>
         </div>
         <div class="flex flex-column gap-1">
             <label class="font-bold">Curso</label>
-            <p-dropdown [options]="(cursos$ | async) || []" formControlName="cursoId" optionLabel="nome" optionValue="id" placeholder="Todos" [showClear]="true"></p-dropdown>
+            <p-select [options]="(cursos$ | async) || []" formControlName="cursoId" optionLabel="nome" optionValue="id" placeholder="Todos" [showClear]="true"></p-select>
         </div>
     </div>
 
@@ -65,24 +65,24 @@
     <form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-column gap-3 mt-3">
         <div class="flex flex-column gap-1">
             <label for="disciplina" class="font-bold">Disciplina</label>
-            <p-dropdown id="disciplina" [options]="(disciplinas$ | async) || []" formControlName="disciplinaId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-dropdown>
+            <p-select id="disciplina" [options]="(disciplinas$ | async) || []" formControlName="disciplinaId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-select>
         </div>
 
         <div class="flex flex-column gap-1">
             <label for="professor" class="font-bold">Professor</label>
-            <p-dropdown id="professor" [options]="(professores$ | async) || []" formControlName="professorId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-dropdown>
+            <p-select id="professor" [options]="(professores$ | async) || []" formControlName="professorId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-select>
         </div>
 
         <div class="flex flex-column gap-1">
             <label for="horario" class="font-bold">Horário</label>
-            <p-dropdown id="horario" [options]="(horarios$ | async) || []" formControlName="horarioId" placeholder="Selecione">
+            <p-select id="horario" [options]="(horarios$ | async) || []" formControlName="horarioId" placeholder="Selecione">
                 <ng-template let-h pTemplate="item">
                     {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
                 </ng-template>
                 <ng-template let-h pTemplate="selectedItem">
                     {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }}
                 </ng-template>
-            </p-dropdown>
+            </p-select>
         </div>
 
         <div class="flex flex-column gap-1">

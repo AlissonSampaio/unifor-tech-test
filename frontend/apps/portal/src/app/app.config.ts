@@ -2,7 +2,9 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import Aura from '@primeng/themes/aura';
 import { INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG, includeBearerTokenInterceptor, provideKeycloak } from 'keycloak-angular';
+import { providePrimeNG } from 'primeng/config';
 
 import { keycloakConfig } from '@frontend/auth';
 import { appRoutes } from './app.routes';
@@ -19,6 +21,14 @@ export const appConfig: ApplicationConfig = {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html'
       }
+    }),
+    providePrimeNG({
+        theme: {
+            preset: Aura,
+            options: {
+                darkModeSelector: false
+            }
+        }
     }),
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,

@@ -12,9 +12,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 
 @Component({
@@ -25,7 +25,7 @@ import { TableModule } from 'primeng/table';
     TableModule, 
     ButtonModule, 
     DialogModule, 
-    DropdownModule, 
+    SelectModule, 
     MultiSelectModule, 
     InputNumberModule,
     ConfirmDialogModule
