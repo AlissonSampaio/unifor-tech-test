@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Histórico Git - unifor-test (estilo GitKraken)</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0d1117 0%,
+          #161b22 50%,
+          #0d1117 100%
+        );
+        min-height: 100vh;
+        color: #c9d1d9;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #58a6ff;
+        margin-bottom: 0.25rem;
+      }
+
+      .header p {
+        font-size: 0.875rem;
+        color: #8b949e;
+      }
+
+      .graph-container {
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .branch-label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: linear-gradient(90deg, #238636 0%, #2ea043 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4);
+        z-index: 10;
+      }
+
+      .branch-label::after {
+        content: "●";
+        margin-left: 0.5rem;
+        font-size: 0.5rem;
+        opacity: 0.8;
+      }
+
+      .timeline {
+        margin-left: 120px;
+        padding: 2rem 0;
+        position: relative;
+      }
+
+      .commit-line {
+        position: absolute;
+        left: 39px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(
+          180deg,
+          #58a6ff 0%,
+          #388bfd 50%,
+          #1f6feb 100%
+        );
+        border-radius: 2px;
+        opacity: 0.6;
+      }
+
+      .commit {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        position: relative;
+        transition: transform 0.2s ease;
+      }
+
+      .commit:hover {
+        transform: translateX(4px);
+      }
+
+      .commit-node {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        border: 3px solid #0d1117;
+        box-shadow: 0 0 0 2px currentColor, 0 2px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 2;
+      }
+
+      .commit-node.feat {
+        background: #58a6ff;
+        color: #58a6ff;
+      }
+      .commit-node.chore {
+        background: #8b949e;
+        color: #8b949e;
+      }
+      .commit-node.fix {
+        background: #f85149;
+        color: #f85149;
+      }
+      .commit-node.docs {
+        background: #a371f7;
+        color: #a371f7;
+      }
+      .commit-node.test {
+        background: #3fb950;
+        color: #3fb950;
+      }
+
+      .commit-content {
+        flex: 1;
+        background: rgba(22, 27, 34, 0.8);
+        border: 1px solid #30363d;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+
+      .commit:hover .commit-content {
+        border-color: #58a6ff;
+        box-shadow: 0 0 0 1px #58a6ff33;
+      }
+
+      .commit-message {
+        font-weight: 500;
+        color: #e6edf3;
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+      }
+
+      .commit-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.75rem;
+        color: #8b949e;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      .commit-hash {
+        color: #58a6ff;
+      }
+
+      .commit-author {
+        color: #a371f7;
+      }
+
+      .commit-date {
+        color: #3fb950;
+      }
+
+      .legend {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-top: 2rem;
+        padding: 1rem;
+        background: rgba(22, 27, 34, 0.6);
+        border-radius: 8px;
+        border: 1px solid #30363d;
+        flex-wrap: wrap;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: #8b949e;
+      }
+
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+
+      .legend-dot.feat {
+        background: #58a6ff;
+      }
+      .legend-dot.chore {
+        background: #8b949e;
+      }
+      .legend-dot.fix {
+        background: #f85149;
+      }
+      .legend-dot.docs {
+        background: #a371f7;
+      }
+      .legend-dot.test {
+        background: #3fb950;
+      }
+
+      .stats {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 0.875rem;
+        color: #8b949e;
+      }
+
+      .stats span {
+        color: #58a6ff;
+        font-weight: 500;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>📊 Histórico Git - unifor-test</h1>
+      <p>Visualização estilo GitKraken</p>
+    </div>
+
+    <div class="stats">
+      <span id="commit-count">21</span> commits · branch <span>master</span> ·
+      Autor: Alisson Sampaio
+    </div>
+
+    <div class="graph-container">
+      <div class="branch-label">master</div>
+
+      <div class="timeline">
+        <div class="commit-line"></div>
+
+        <div class="commit" data-commit="7856a5d">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat: implement final improvements plan including integration
+              tests, dockerization and frontend tests
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">7856a5d</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="0940db1">
+          <div class="commit-node docs"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              docs: expand technical decisions with trade-offs
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">0940db1</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="bc08272">
+          <div class="commit-node fix"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              fix(db): use string enums in init sql
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">bc08272</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="b3373c0">
+          <div class="commit-node test"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              test(backend): expand unit tests for matrix and enrollment
+              services
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">b3373c0</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="7b7e155">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add dto validation and openapi documentation
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">7b7e155</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="c235b76">
+          <div class="commit-node docs"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              docs: finalize readme and technical decisions
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">c235b76</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="3992589">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(frontend): add coordinator and student screens
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">3992589</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="f3cd445">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(frontend): add shared library structure
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">f3cd445</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="b9a90e8">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(frontend): add data access services with rxjs
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">b9a90e8</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="8d32950">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(frontend): add keycloak auth library with guards
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">8d32950</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="d3957e6">
+          <div class="commit-node chore"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              chore(frontend): init nx workspace with angular
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">d3957e6</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="9e4a6d3">
+          <div class="commit-node test"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              test(backend): add unit tests for matrix and enrollment services
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">9e4a6d3</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="74926af">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add rest endpoints for student enrollment
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">74926af</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="10f8a0d">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add enrollment service with concurrency control
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">10f8a0d</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="6aa3102">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add rest endpoints for matrix management
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">6aa3102</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="6f8752c">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add matrix management service with business rules
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">6f8752c</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="d1f6101">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add repositories and seed data
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">d1f6101</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="c74f282">
+          <div class="commit-node feat"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              feat(backend): add domain entities with jpa mappings
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">c74f282</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="e8e3b0d">
+          <div class="commit-node chore"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              chore(backend): init quarkus project with kotlin and extensions
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">e8e3b0d</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commit" data-commit="85722f8">
+          <div class="commit-node chore"></div>
+          <div class="commit-content">
+            <div class="commit-message">
+              chore: setup docker infrastructure with postgres and keycloak
+            </div>
+            <div class="commit-meta">
+              <span class="commit-hash">85722f8</span>
+              <span class="commit-author">Alisson Sampaio</span>
+              <span class="commit-date">2026-02-02</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <span class="legend-dot feat"></span> feat (feature)
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot chore"></span> chore
+      </div>
+      <div class="legend-item"><span class="legend-dot fix"></span> fix</div>
+      <div class="legend-item"><span class="legend-dot docs"></span> docs</div>
+      <div class="legend-item"><span class="legend-dot test"></span> test</div>
+    </div>
+  </body>
+</html>
