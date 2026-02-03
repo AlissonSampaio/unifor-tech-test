@@ -8,8 +8,8 @@ services:
       POSTGRES_USER: unifor
       POSTGRES_PASSWORD: unifor123
       POSTGRES_DB: matriz_curricular
-    volumes:
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+#    volumes:
+#      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U unifor -d matriz_curricular"]
       interval: 10s
