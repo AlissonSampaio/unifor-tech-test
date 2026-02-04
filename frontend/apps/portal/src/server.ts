@@ -14,8 +14,6 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
- *
-
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
