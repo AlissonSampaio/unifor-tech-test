@@ -1,45 +1,56 @@
 import { TestBed } from '@angular/core/testing';
-import { KeycloakService } from 'keycloak-angular';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { firstValueFrom } from 'rxjs';
+import Keycloak from 'keycloak-js';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let keycloakServiceSpy: jasmine.SpyObj<KeycloakService>;
+  let keycloakMock: {
+    authenticated: boolean;
+    realmAccess: { roles: string[] };
+    token: string;
+    login: ReturnType<typeof vi.fn>;
+    logout: ReturnType<typeof vi.fn>;
+    loadUserProfile: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
-    const spy = jasmine.createSpyObj('KeycloakService', ['isLoggedIn', 'loadUserProfile', 'getUserRoles', 'getKeycloakInstance', 'login', 'logout']);
-    
+    keycloakMock = {
+      authenticated: true,
+      realmAccess: { roles: ['COORDENADOR'] },
+      token: 'mock-token',
+      login: vi.fn(),
+      logout: vi.fn(),
+      loadUserProfile: vi.fn()
+    };
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        { provide: KeycloakService, useValue: spy }
+        { provide: Keycloak, useValue: keycloakMock }
       ]
     });
-    
+
     service = TestBed.inject(AuthService);
-    keycloakServiceSpy = TestBed.inject(KeycloakService) as jasmine.SpyObj<KeycloakService>;
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return isLoggedIn from keycloak', (done) => {
-    keycloakServiceSpy.isLoggedIn.and.returnValue(true);
-    service.isLoggedIn$.subscribe(val => {
-      expect(val).toBeTrue();
-      done();
-    });
+  it('should return isLoggedIn from keycloak', async () => {
+    const val = await firstValueFrom(service.isLoggedIn$);
+    expect(val).toBe(true);
   });
 
   it('should check for COORDENADOR role', () => {
-    keycloakServiceSpy.getUserRoles.and.returnValue(['COORDENADOR', 'USER']);
-    expect(service.isCoordinator()).toBeTrue();
-    expect(service.isStudent()).toBeFalse();
+    expect(service.isCoordinator()).toBe(true);
+    expect(service.isStudent()).toBe(false);
   });
 
   it('should call keycloak logout', () => {
     service.logout();
-    expect(keycloakServiceSpy.logout).toHaveBeenCalled();
+    expect(keycloakMock.logout).toHaveBeenCalled();
   });
 });
