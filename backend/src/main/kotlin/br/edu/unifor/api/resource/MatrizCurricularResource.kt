@@ -45,14 +45,18 @@ class MatrizCurricularResource {
         @Parameter(description = "Filtrar por período (MANHA, TARDE, NOITE)") @QueryParam("periodo") periodo: Periodo?,
         @Parameter(description = "Filtrar por ID do curso") @QueryParam("cursoId") cursoId: Long?,
         @Parameter(description = "Filtrar por hora de início (HH:mm:ss)") @QueryParam("horaInicio") horaInicio: String?,
-        @Parameter(description = "Filtrar por hora de fim (HH:mm:ss)") @QueryParam("horaFim") horaFim: String?
+        @Parameter(description = "Filtrar por hora de fim (HH:mm:ss)") @QueryParam("horaFim") horaFim: String?,
+        @Parameter(description = "Filtrar por mínimo de vagas") @QueryParam("maxAlunosMin") maxAlunosMin: Int?,
+        @Parameter(description = "Filtrar por máximo de vagas") @QueryParam("maxAlunosMax") maxAlunosMax: Int?
     ): Response {
         val keycloakId = securityIdentity.principal.name
         val filtro = MatrizFiltroRequest(
             periodo = periodo,
             cursoId = cursoId,
             horaInicio = parseTime(horaInicio),
-            horaFim = parseTime(horaFim)
+            horaFim = parseTime(horaFim),
+            maxAlunosMin = maxAlunosMin,
+            maxAlunosMax = maxAlunosMax
         )
         return Response.ok(service.listar(filtro, keycloakId)).build()
     }
@@ -65,7 +69,6 @@ class MatrizCurricularResource {
         APIResponse(responseCode = "403", description = "Sem permissão para gerenciar um dos cursos")
     )
     fun criar(@Valid request: MatrizCurricularRequest): Response {
-        println("RECEBENDO REQUEST CRIAR: $request")
         val keycloakId = securityIdentity.principal.name
         val created = service.criar(request, keycloakId)
         return Response.status(Response.Status.CREATED).entity(created).build()

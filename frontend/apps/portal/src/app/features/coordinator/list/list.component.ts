@@ -60,7 +60,9 @@ export class MatrizListComponent implements OnInit {
 
   filtroForm = this.fb.group({
     periodo: [null as Periodo | null],
-    cursoId: [null as number | null]
+    cursoId: [null as number | null],
+    maxAlunosMin: [null as number | null],
+    maxAlunosMax: [null as number | null]
   });
 
   periodos = [

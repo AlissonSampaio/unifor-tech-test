@@ -44,6 +44,10 @@ class MatrizCurricularService {
         val horario = horarioRepository.findById(horId)
             ?: throw NotFoundException("Horário", horId)
 
+        if (repository.existsByDisciplinaAndHorario(disciplina.id!!, horario.id!!)) {
+            throw ConflictException("Já existe uma aula desta disciplina neste horário")
+        }
+
         val cursos = request.cursosAutorizadosIds.map { cursoId ->
             val curso = cursoRepository.findById(cursoId) ?: throw NotFoundException("Curso", cursoId)
             if (coordenador.cursosGerenciados.none { it.id == curso.id }) {
@@ -74,7 +78,7 @@ class MatrizCurricularService {
 
         val cursosIds = coordenador.cursosGerenciados.map { it.id!! }
         
-        val matrizes = repository.findByFilters(filtro.periodo, filtro.cursoId, filtro.horaInicio, filtro.horaFim)
+        val matrizes = repository.findByFilters(filtro.periodo, filtro.cursoId, filtro.horaInicio, filtro.horaFim, filtro.maxAlunosMin, filtro.maxAlunosMax)
         
         return matrizes.filter { m ->
             m.cursosAutorizados.any { ca -> cursosIds.contains(ca.id) }
@@ -103,6 +107,10 @@ class MatrizCurricularService {
         val horId = request.horarioId!!
         val horario = horarioRepository.findById(horId)
             ?: throw NotFoundException("Horário", horId)
+
+        if (matriz.horario.id != horario.id && repository.existsByDisciplinaAndHorario(matriz.disciplina.id!!, horario.id!!, id)) {
+            throw ConflictException("Já existe uma aula desta disciplina neste horário")
+        }
 
         val novosCursos = request.cursosAutorizadosIds.map { cursoId ->
             cursoRepository.findById(cursoId) ?: throw NotFoundException("Curso", cursoId)

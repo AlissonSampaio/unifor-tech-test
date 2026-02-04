@@ -83,4 +83,6 @@ export interface MatrizFiltro {
   cursoId?: number;
   horaInicio?: string;
   horaFim?: string;
+  maxAlunosMin?: number;
+  maxAlunosMax?: number;
 }

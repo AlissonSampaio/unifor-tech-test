@@ -8,7 +8,7 @@ import java.time.LocalTime
 @ApplicationScoped
 class MatrizCurricularRepository : PanacheRepository<MatrizCurricular> {
     
-    fun findByFilters(periodo: Periodo?, cursoId: Long?, horaInicio: LocalTime?, horaFim: LocalTime?): List<MatrizCurricular> {
+    fun findByFilters(periodo: Periodo?, cursoId: Long?, horaInicio: LocalTime?, horaFim: LocalTime?, maxAlunosMin: Int?, maxAlunosMax: Int?): List<MatrizCurricular> {
         val query = StringBuilder("deleted = false")
         val params = mutableMapOf<String, Any>()
 
@@ -28,8 +28,24 @@ class MatrizCurricularRepository : PanacheRepository<MatrizCurricular> {
             query.append(" AND horario.horaFim <= :horaFim")
             params["horaFim"] = horaFim
         }
+        if (maxAlunosMin != null) {
+            query.append(" AND maxAlunos >= :maxAlunosMin")
+            params["maxAlunosMin"] = maxAlunosMin
+        }
+        if (maxAlunosMax != null) {
+            query.append(" AND maxAlunos <= :maxAlunosMax")
+            params["maxAlunosMax"] = maxAlunosMax
+        }
 
         return list(query.toString(), params)
+    }
+
+    fun existsByDisciplinaAndHorario(disciplinaId: Long, horarioId: Long, excludeId: Long? = null): Boolean {
+        return if (excludeId != null) {
+            count("disciplina.id = ?1 AND horario.id = ?2 AND deleted = false AND id != ?3", disciplinaId, horarioId, excludeId) > 0
+        } else {
+            count("disciplina.id = ?1 AND horario.id = ?2 AND deleted = false", disciplinaId, horarioId) > 0
+        }
     }
 
     fun countMatriculados(matrizId: Long): Long {

@@ -14,6 +14,14 @@
             <label class="font-bold">Curso</label>
             <p-select [options]="(cursos$ | async) || []" formControlName="cursoId" optionLabel="nome" optionValue="id" placeholder="Todos" [showClear]="true"></p-select>
         </div>
+        <div class="flex flex-column gap-1">
+            <label class="font-bold">Vagas (mín)</label>
+            <p-inputNumber formControlName="maxAlunosMin" [min]="1" placeholder="Mínimo" [showClear]="true"></p-inputNumber>
+        </div>
+        <div class="flex flex-column gap-1">
+            <label class="font-bold">Vagas (máx)</label>
+            <p-inputNumber formControlName="maxAlunosMax" [min]="1" placeholder="Máximo" [showClear]="true"></p-inputNumber>
+        </div>
     </div>
 
     <p-table [value]="(matrizes$ | async) || []" [loading]="loading" styleClass="p-datatable-striped">

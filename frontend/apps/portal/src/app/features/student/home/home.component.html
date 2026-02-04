@@ -17,7 +17,11 @@
                         <td>{{ aula.professor.nome }}</td>
                         <td>{{ formatarHorario(aula.horario) }}</td>
                         <td>
-                            <p-tag [severity]="aula.vagasDisponiveis > 0 ? 'success' : 'danger'" [value]="aula.vagasDisponiveis + ' / ' + aula.maxAlunos"></p-tag>
+                            <div class="flex flex-wrap gap-1 align-items-center">
+                                <p-tag *ngIf="aula.conflitaHorario" severity="warn" value="Conflito de Horário"></p-tag>
+                                <p-tag *ngIf="aula.jaMatriculado" severity="info" value="Já Matriculado"></p-tag>
+                                <p-tag [severity]="aula.vagasDisponiveis > 0 ? 'success' : 'danger'" [value]="aula.vagasDisponiveis + ' / ' + aula.maxAlunos"></p-tag>
+                            </div>
                         </td>
                         <td>
                             <p-button 

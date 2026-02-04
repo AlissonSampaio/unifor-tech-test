@@ -18,6 +18,8 @@ export class MatrizService {
       if (filtro.cursoId) params = params.set('cursoId', filtro.cursoId.toString());
       if (filtro.horaInicio) params = params.set('horaInicio', filtro.horaInicio);
       if (filtro.horaFim) params = params.set('horaFim', filtro.horaFim);
+      if (filtro.maxAlunosMin != null) params = params.set('maxAlunosMin', filtro.maxAlunosMin.toString());
+      if (filtro.maxAlunosMax != null) params = params.set('maxAlunosMax', filtro.maxAlunosMax.toString());
     }
 
     return this.http.get<MatrizCurricular[]>(this.apiUrl, { params }).pipe(

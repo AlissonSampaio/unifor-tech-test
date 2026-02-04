@@ -1,6 +1,7 @@
 package br.edu.unifor
 
 import br.edu.unifor.api.dto.MatrizCurricularRequest
+import br.edu.unifor.api.dto.MatrizFiltroRequest
 import br.edu.unifor.application.exception.BusinessException
 import br.edu.unifor.application.exception.ConflictException
 import br.edu.unifor.application.service.MatrizCurricularService
@@ -158,5 +159,75 @@ class MatrizCurricularServiceTest {
         assertThrows(ConflictException::class.java) {
             service.atualizar(1L, request, "coord1")
         }
+    }
+
+    @Test
+    fun `deve falhar ao criar matriz com mesma disciplina e horario`() {
+        val coord = Coordenador().apply { id = 1L; cursosGerenciados = mutableListOf(Curso().apply { id = 1L }) }
+        val disc = Disciplina().apply { id = 1L }
+        val prof = Professor().apply { id = 1L }
+        val hor = Horario().apply { id = 1L }
+        val curso = Curso().apply { id = 1L }
+
+        `when`(coordenadorRepository.findByKeycloakId(anyString())).thenReturn(coord)
+        `when`(disciplinaRepository.findById(anyLong())).thenReturn(disc)
+        `when`(professorRepository.findById(anyLong())).thenReturn(prof)
+        `when`(horarioRepository.findById(anyLong())).thenReturn(hor)
+        `when`(cursoRepository.findById(anyLong())).thenReturn(curso)
+        `when`(repository.existsByDisciplinaAndHorario(1L, 1L, null)).thenReturn(true) // Já existe
+
+        val request = MatrizCurricularRequest(1L, 1L, 1L, 30, listOf(1L))
+
+        assertThrows(ConflictException::class.java) {
+            service.criar(request, "coord1")
+        }
+        verify(repository, never()).persist(any(MatrizCurricular::class.java))
+    }
+
+    @Test
+    fun `deve permitir mesma disciplina em horarios diferentes`() {
+        val coord = Coordenador().apply { id = 1L; cursosGerenciados = mutableListOf(Curso().apply { id = 1L }) }
+        val disc = Disciplina().apply { id = 1L; nome = "Algo" }
+        val prof = Professor().apply { id = 1L }
+        val hor1 = Horario().apply { id = 1L; diaSemana = DiaSemana.SEGUNDA; horaInicio = LocalTime.NOON; horaFim = LocalTime.NOON.plusHours(2); periodo = Periodo.TARDE }
+        val hor2 = Horario().apply { id = 2L; diaSemana = DiaSemana.TERCA; horaInicio = LocalTime.NOON; horaFim = LocalTime.NOON.plusHours(2); periodo = Periodo.TARDE }
+        val curso = Curso().apply { id = 1L }
+
+        `when`(coordenadorRepository.findByKeycloakId(anyString())).thenReturn(coord)
+        `when`(disciplinaRepository.findById(1L)).thenReturn(disc)
+        `when`(professorRepository.findById(anyLong())).thenReturn(prof)
+        `when`(horarioRepository.findById(1L)).thenReturn(hor1)
+        `when`(horarioRepository.findById(2L)).thenReturn(hor2)
+        `when`(cursoRepository.findById(anyLong())).thenReturn(curso)
+        `when`(matriculaRepository.countByMatrizId(anyLong())).thenReturn(0L)
+        `when`(repository.existsByDisciplinaAndHorario(1L, 2L, null)).thenReturn(false) // Horário diferente, OK
+
+        val request = MatrizCurricularRequest(1L, 1L, 2L, 30, listOf(1L)) // disciplina 1, horario 2
+        val response = service.criar(request, "coord1")
+
+        assertNotNull(response)
+        assertEquals("Algo", response.disciplina.nome)
+        verify(repository, times(1)).persist(any(MatrizCurricular::class.java))
+    }
+
+    @Test
+    fun `deve listar com filtro maxAlunos`() {
+        val coord = Coordenador().apply { id = 1L; cursosGerenciados = mutableListOf(Curso().apply { id = 1L }) }
+        val matriz = MatrizCurricular().apply {
+            id = 1L; deleted = false; disciplina = Disciplina().apply { id = 1L; nome = "Algo"; codigo = "A1"; cargaHoraria = 60 }
+            professor = Professor().apply { id = 1L; nome = "Prof"; email = "a@b.com" }
+            horario = Horario().apply { id = 1L; diaSemana = DiaSemana.SEGUNDA; horaInicio = LocalTime.NOON; horaFim = LocalTime.NOON.plusHours(2); periodo = Periodo.TARDE }
+            maxAlunos = 30; cursosAutorizados = mutableListOf(Curso().apply { id = 1L; nome = "CC"; codigo = "CC" })
+        }
+        `when`(coordenadorRepository.findByKeycloakId(anyString())).thenReturn(coord)
+        `when`(repository.findByFilters(Periodo.TARDE, 1L, null, null, 10, 50)).thenReturn(listOf(matriz))
+        `when`(matriculaRepository.countByMatrizId(anyLong())).thenReturn(0L)
+
+        val filtro = MatrizFiltroRequest(Periodo.TARDE, 1L, null, null, 10, 50)
+        val result = service.listar(filtro, "coord1")
+
+        assertEquals(1, result.size)
+        assertEquals("Algo", result[0].disciplina.nome)
+        assertEquals(30, result[0].maxAlunos)
     }
 }
