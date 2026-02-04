@@ -5,7 +5,7 @@ Sistema full-stack para gerenciamento de matriz curricular e matriculas de aluno
 ## Tecnologias
 
 ### Backend
-- Kotlin 2.0+ com Quarkus 3.15+
+- Kotlin 2.0.21 com Quarkus 3.21+
 - Hibernate Panache (ORM)
 - PostgreSQL 15
 - Keycloak 24 (OIDC)
