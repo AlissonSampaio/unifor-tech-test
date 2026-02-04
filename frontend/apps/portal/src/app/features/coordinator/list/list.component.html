@@ -73,17 +73,17 @@
     <form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-column gap-3 mt-3">
         <div class="flex flex-column gap-1">
             <label for="disciplina" class="font-bold">Disciplina</label>
-            <p-select id="disciplina" [options]="(disciplinas$ | async) || []" formControlName="disciplinaId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-select>
+            <p-select id="disciplina" [options]="(disciplinas$ | async) || []" formControlName="disciplinaId" optionLabel="nome" optionValue="id" placeholder="Selecione" appendTo="body"></p-select>
         </div>
 
         <div class="flex flex-column gap-1">
             <label for="professor" class="font-bold">Professor</label>
-            <p-select id="professor" [options]="(professores$ | async) || []" formControlName="professorId" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-select>
+            <p-select id="professor" [options]="(professores$ | async) || []" formControlName="professorId" optionLabel="nome" optionValue="id" placeholder="Selecione" appendTo="body"></p-select>
         </div>
 
         <div class="flex flex-column gap-1">
             <label for="horario" class="font-bold">Horário</label>
-            <p-select id="horario" [options]="(horarios$ | async) || []" formControlName="horarioId" placeholder="Selecione">
+            <p-select id="horario" [options]="(horarios$ | async) || []" formControlName="horarioId" placeholder="Selecione" appendTo="body">
                 <ng-template let-h pTemplate="item">
                     {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
                 </ng-template>
@@ -100,7 +100,7 @@
 
         <div class="flex flex-column gap-1">
             <label for="cursos" class="font-bold">Cursos Autorizados</label>
-            <p-multiSelect id="cursos" [options]="(cursos$ | async) || []" formControlName="cursosAutorizadosIds" optionLabel="nome" optionValue="id" placeholder="Selecione"></p-multiSelect>
+            <p-multiSelect id="cursos" [options]="(cursos$ | async) || []" formControlName="cursosAutorizadosIds" optionLabel="nome" optionValue="id" placeholder="Selecione" appendTo="body"></p-multiSelect>
         </div>
 
         <div class="flex justify-content-end gap-2 mt-4">
