@@ -116,7 +116,7 @@ export class CoordinatorPage {
     if (data.cursos && data.cursos.length > 0) {
       await this.cursosMultiSelect.click();
       for (const curso of data.cursos) {
-        await this.page.locator('.p-multiselect-item', { hasText: curso }).click();
+        await this.page.locator('.p-multiselect-option', { hasText: curso }).click();
       }
       await this.page.keyboard.press('Escape');
     }

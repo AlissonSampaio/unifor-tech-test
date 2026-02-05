@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { StudentPage } from './pages/student.po';
 import { PAGE_TITLES } from './fixtures/test-data';
-import { MOCK_AULAS_DISPONIVEIS, MOCK_MATRICULAS, API_ROUTES } from './fixtures/mock-data';
+import {
+  MOCK_AULAS_DISPONIVEIS,
+  MOCK_MATRICULAS,
+  MOCK_NEW_MATRICULA,
+  API_ROUTES,
+} from './fixtures/mock-data';
 import * as path from 'path';
 
 test.describe('Student - Enrollment Page', () => {
@@ -143,6 +148,92 @@ test.describe('Student - Enrollment Page', () => {
 
       const isEnrolled = await studentPage.isAlreadyEnrolled(2);
       expect(isEnrolled).toBe(true);
+    });
+  });
+
+  test.describe('Complete Enrollment Flow', () => {
+    test('should enroll in a class successfully', async ({ page }) => {
+      let matriculasData = [...MOCK_MATRICULAS];
+      const updatedAulas = MOCK_AULAS_DISPONIVEIS.map((aula, index) =>
+        index === 0 ? { ...aula, jaMatriculado: true, podeMatricular: false } : aula
+      );
+
+      await page.route(API_ROUTES.aulasDisponiveis, (route) => {
+        if (matriculasData.length > MOCK_MATRICULAS.length) {
+          return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(updatedAulas) });
+        }
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_AULAS_DISPONIVEIS) });
+      });
+
+      await page.route(API_ROUTES.matriculas, (route) => {
+        if (route.request().method() === 'POST') {
+          matriculasData = [...matriculasData, MOCK_NEW_MATRICULA];
+          return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(MOCK_NEW_MATRICULA) });
+        }
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(matriculasData) });
+      });
+
+      const studentPage = new StudentPage(page);
+      await studentPage.goto();
+
+      const canEnrollBefore = await studentPage.canEnroll(0);
+      expect(canEnrollBefore).toBe(true);
+
+      await studentPage.enrollInClass(0);
+
+      const toast = page.locator('.p-toast-message-success');
+      await expect(toast).toBeVisible({ timeout: 5000 });
+    });
+
+    test('should handle enrollment error', async ({ page }) => {
+      await page.route(API_ROUTES.aulasDisponiveis, (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_AULAS_DISPONIVEIS) })
+      );
+
+      await page.route(API_ROUTES.matriculas, (route) => {
+        if (route.request().method() === 'POST') {
+          return route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ message: 'Sem vagas disponíveis' }) });
+        }
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(MOCK_MATRICULAS) });
+      });
+
+      const studentPage = new StudentPage(page);
+      await studentPage.goto();
+
+      await studentPage.enrollInClass(0);
+
+      const toast = page.locator('.p-toast-message-error');
+      await expect(toast).toBeVisible({ timeout: 5000 });
+    });
+  });
+
+  test.describe('API Error Handling', () => {
+    test('should handle server error when loading available classes', async ({ page }) => {
+      await page.route(API_ROUTES.aulasDisponiveis, (route) =>
+        route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ message: 'Internal Server Error' }) })
+      );
+      await page.route(API_ROUTES.matriculas, (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+      );
+
+      const studentPage = new StudentPage(page);
+      await page.goto('/aluno');
+
+      await expect(studentPage.availableClassesTable).toBeVisible();
+    });
+
+    test('should handle server error when loading enrollments', async ({ page }) => {
+      await page.route(API_ROUTES.aulasDisponiveis, (route) =>
+        route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([]) })
+      );
+      await page.route(API_ROUTES.matriculas, (route) =>
+        route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ message: 'Internal Server Error' }) })
+      );
+
+      const studentPage = new StudentPage(page);
+      await page.goto('/aluno');
+
+      await expect(studentPage.enrollmentsTable).toBeVisible();
     });
   });
 });
