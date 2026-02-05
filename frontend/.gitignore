@@ -46,3 +46,10 @@ Thumbs.db
 __screenshots__/
 
 vitest.config.*.timestamp*
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+**/e2e/.auth/

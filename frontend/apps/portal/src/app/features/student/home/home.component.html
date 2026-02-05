@@ -1,7 +1,7 @@
-<div class="grid">
+<div class="grid" data-testid="student-page">
     <div class="col-12 xl:col-7">
-        <p-card header="Aulas Disponíveis para seu Curso">
-            <p-table [value]="(aulasDisponiveis$ | async) || []" styleClass="p-datatable-sm">
+        <p-card header="Aulas Disponíveis para seu Curso" data-testid="available-classes-card">
+            <p-table [value]="(aulasDisponiveis$ | async) || []" styleClass="p-datatable-sm" data-testid="available-classes-table">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Disciplina</th>
@@ -18,8 +18,12 @@
                         <td>{{ formatarHorario(aula.horario) }}</td>
                         <td>
                             <div class="flex flex-wrap gap-1 align-items-center">
-                                <p-tag *ngIf="aula.conflitaHorario" severity="warn" value="Conflito de Horário"></p-tag>
-                                <p-tag *ngIf="aula.jaMatriculado" severity="info" value="Já Matriculado"></p-tag>
+                                @if (aula.conflitaHorario) {
+                                    <p-tag severity="warn" value="Conflito de Horário"></p-tag>
+                                }
+                                @if (aula.jaMatriculado) {
+                                    <p-tag severity="info" value="Já Matriculado"></p-tag>
+                                }
                                 <p-tag [severity]="aula.vagasDisponiveis > 0 ? 'success' : 'danger'" [value]="aula.vagasDisponiveis + ' / ' + aula.maxAlunos"></p-tag>
                             </div>
                         </td>
@@ -31,7 +35,8 @@
                                 [loading]="matriculando === aula.id"
                                 (click)="matricular(aula)"
                                 [pTooltip]="getTooltip(aula)"
-                                tooltipPosition="left">
+                                tooltipPosition="left"
+                                data-testid="enroll-button">
                             </p-button>
                         </td>
                     </tr>
@@ -46,8 +51,8 @@
     </div>
 
     <div class="col-12 xl:col-5">
-        <p-card header="Minhas Matrículas">
-            <p-table [value]="(minhasMatriculas$ | async) || []">
+        <p-card header="Minhas Matrículas" data-testid="enrollments-card">
+            <p-table [value]="(minhasMatriculas$ | async) || []" data-testid="enrollments-table">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Disciplina</th>
