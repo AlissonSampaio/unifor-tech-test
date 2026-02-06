@@ -79,18 +79,16 @@ class MatrizCurricularService {
 
         val cursosIds = coordenador.cursosGerenciados.map { it.id!! }
 
-        val matrizes =
-                repository.findByFilters(
+        return repository
+                .findByFilters(
                         filtro.periodo,
                         filtro.cursoId,
                         filtro.horaInicio,
                         filtro.horaFim,
                         filtro.maxAlunosMin,
-                        filtro.maxAlunosMax
+                        filtro.maxAlunosMax,
+                        cursosIds
                 )
-
-        return matrizes
-                .filter { m -> m.cursosAutorizados.any { ca -> cursosIds.contains(ca.id) } }
                 .map { toResponse(it) }
     }
 

@@ -354,7 +354,7 @@ class MatrizCurricularServiceTest {
                             )
                 }
         `when`(coordenadorRepository.findByKeycloakId(anyString())).thenReturn(coord)
-        `when`(repository.findByFilters(Periodo.TARDE, 1L, null, null, 10, 50))
+        `when`(repository.findByFilters(Periodo.TARDE, 1L, null, null, 10, 50, listOf(1L)))
                 .thenReturn(listOf(matriz))
         `when`(matriculaRepository.countByMatrizId(anyLong())).thenReturn(0L)
 

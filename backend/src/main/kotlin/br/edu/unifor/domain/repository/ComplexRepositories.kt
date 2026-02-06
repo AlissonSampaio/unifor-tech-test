@@ -8,7 +8,15 @@ import java.time.LocalTime
 @ApplicationScoped
 class MatrizCurricularRepository : PanacheRepository<MatrizCurricular> {
     
-    fun findByFilters(periodo: Periodo?, cursoId: Long?, horaInicio: LocalTime?, horaFim: LocalTime?, maxAlunosMin: Int?, maxAlunosMax: Int?): List<MatrizCurricular> {
+    fun findByFilters(
+        periodo: Periodo?,
+        cursoId: Long?,
+        horaInicio: LocalTime?,
+        horaFim: LocalTime?,
+        maxAlunosMin: Int?,
+        maxAlunosMax: Int?,
+        coordenadorCursosIds: List<Long>? = null
+    ): List<MatrizCurricular> {
         val query = StringBuilder("deleted = false")
         val params = mutableMapOf<String, Any>()
 
@@ -35,6 +43,10 @@ class MatrizCurricularRepository : PanacheRepository<MatrizCurricular> {
         if (maxAlunosMax != null) {
             query.append(" AND maxAlunos <= :maxAlunosMax")
             params["maxAlunosMax"] = maxAlunosMax
+        }
+        if (!coordenadorCursosIds.isNullOrEmpty()) {
+            query.append(" AND EXISTS (SELECT 1 FROM MatrizCurricular m2 JOIN m2.cursosAutorizados ca WHERE m2.id = id AND ca.id IN :coordCursosIds)")
+            params["coordCursosIds"] = coordenadorCursosIds
         }
 
         return list(query.toString(), params)
