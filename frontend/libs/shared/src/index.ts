@@ -1,1 +1,1 @@
-export * from './lib/shared/shared';
+export * from './lib/dia-semana.pipe';

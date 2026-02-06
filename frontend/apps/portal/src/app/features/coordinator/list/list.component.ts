@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   DadosReferenciaService,
-  DiaSemana,
   MatrizCurricular,
   MatrizFiltro,
   MatrizService,
   Periodo
 } from '@frontend/data-access';
+import { FormatDiaSemanaPipe } from '@frontend/shared';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -31,7 +32,8 @@ import { TooltipModule } from 'primeng/tooltip';
     MultiSelectModule,
     InputNumberModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    FormatDiaSemanaPipe
   ],
   providers: [ConfirmationService],
   templateUrl: './list.component.html'
@@ -42,6 +44,7 @@ export class MatrizListComponent implements OnInit {
   private dadosService = inject(DadosReferenciaService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
+  private destroyRef = inject(DestroyRef);
 
   matrizes$ = this.matrizService.matrizes$;
   disciplinas$ = this.dadosService.disciplinas$;
@@ -74,19 +77,12 @@ export class MatrizListComponent implements OnInit {
     { label: 'Noite', value: Periodo.NOITE }
   ];
 
-  private diasSemanaMap: Record<string, string> = {
-    [DiaSemana.SEGUNDA]: 'Seg',
-    [DiaSemana.TERCA]: 'Ter',
-    [DiaSemana.QUARTA]: 'Qua',
-    [DiaSemana.QUINTA]: 'Qui',
-    [DiaSemana.SEXTA]: 'Sex',
-    [DiaSemana.SABADO]: 'Sáb'
-  };
-
   ngOnInit() {
     this.refresh();
 
-    this.filtroForm.valueChanges.subscribe(val => {
+    this.filtroForm.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(val => {
       this.matrizService.listar(val as MatrizFiltro).subscribe();
     });
   }
@@ -97,10 +93,6 @@ export class MatrizListComponent implements OnInit {
       next: () => this.loading = false,
       error: () => this.loading = false
     });
-  }
-
-  formatDiaSemana(dia: string): string {
-    return this.diasSemanaMap[dia] || dia;
   }
 
   showDialog() {

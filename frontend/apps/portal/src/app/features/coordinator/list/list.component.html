@@ -88,7 +88,7 @@
             <td>
               <div class="flex align-items-center gap-2">
                 <i class="pi pi-clock text-color-secondary" style="font-size: 0.875rem;"></i>
-                {{ formatDiaSemana(matriz.horario.diaSemana) }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}
+                {{ matriz.horario.diaSemana | formatDiaSemana }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}
               </div>
             </td>
             <td>
@@ -160,7 +160,7 @@
           <div class="mobile-card-field">
             <span class="field-label">Horário</span>
             <span class="field-value">
-              {{ formatDiaSemana(matriz.horario.diaSemana) }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}
+              {{ matriz.horario.diaSemana | formatDiaSemana }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}
             </span>
           </div>
           <div class="mobile-card-field">
@@ -258,10 +258,10 @@
         appendTo="body"
       >
         <ng-template let-h pTemplate="item">
-          {{ formatDiaSemana(h.diaSemana) }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
+          {{ h.diaSemana | formatDiaSemana }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
         </ng-template>
         <ng-template let-h pTemplate="selectedItem">
-          {{ formatDiaSemana(h.diaSemana) }} {{ h.horaInicio }} - {{ h.horaFim }}
+          {{ h.diaSemana | formatDiaSemana }} {{ h.horaInicio }} - {{ h.horaFim }}
         </ng-template>
       </p-select>
     </div>

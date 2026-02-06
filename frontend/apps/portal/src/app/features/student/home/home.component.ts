@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { AulaDisponivel, DiaSemana, Horario, MatriculaService } from '@frontend/data-access';
+import { AulaDisponivel, Horario, MatriculaService } from '@frontend/data-access';
+import { FormatDiaSemanaPipe, formatDiaSemana } from '@frontend/shared';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -15,7 +16,8 @@ import { finalize, forkJoin } from 'rxjs';
     TableModule,
     ButtonModule,
     TagModule,
-    TooltipModule
+    TooltipModule,
+    FormatDiaSemanaPipe
   ],
   templateUrl: './home.component.html',
   styles: [`
@@ -41,15 +43,6 @@ export class AlunoHomeComponent implements OnInit {
   aulasDisponiveis$ = this.matriculaService.aulasDisponiveis$;
   minhasMatriculas$ = this.matriculaService.minhasMatriculas$;
   matriculando: number | null = null;
-
-  private diasSemanaMap: Record<string, string> = {
-    [DiaSemana.SEGUNDA]: 'Seg',
-    [DiaSemana.TERCA]: 'Ter',
-    [DiaSemana.QUARTA]: 'Qua',
-    [DiaSemana.QUINTA]: 'Qui',
-    [DiaSemana.SEXTA]: 'Sex',
-    [DiaSemana.SABADO]: 'Sáb'
-  };
 
   ngOnInit(): void {
     this.carregarDados();
@@ -77,8 +70,7 @@ export class AlunoHomeComponent implements OnInit {
   }
 
   formatarHorario(horario: Horario): string {
-    const dia = this.diasSemanaMap[horario.diaSemana] || horario.diaSemana;
-    return `${dia} ${horario.horaInicio} - ${horario.horaFim}`;
+    return `${formatDiaSemana(horario.diaSemana)} ${horario.horaInicio} - ${horario.horaFim}`;
   }
 
   getTooltip(aula: AulaDisponivel): string {
