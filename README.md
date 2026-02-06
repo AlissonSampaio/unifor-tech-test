@@ -11,7 +11,7 @@ Sistema full-stack para gerenciamento de matriz curricular e matriculas de aluno
 - Keycloak 24 (OIDC)
 
 ### Frontend
-- Angular 19+ com Nx 22+
+- Angular 21+ com Nx 22+
 - PrimeNG 21+ (UI Components)
 - RxJS (Programacao Reativa)
 
@@ -88,7 +88,7 @@ npx nx serve portal
 │   └── libs/
 │       ├── auth/      # Integracao Keycloak
 │       ├── data-access/  # Services de API
-│       └── shared/    # Componentes Comuns
+│       └── shared/    # Pipes e Utilitarios Compartilhados
 ├── docker/            # Configuracoes Docker
 │   └── keycloak/      # Realm Export
 └── docker-compose.yml
