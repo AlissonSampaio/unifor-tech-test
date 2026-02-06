@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { AulaDisponivel, Horario, MatriculaService } from '@frontend/data-access';
+import { AulaDisponivel, DiaSemana, Horario, MatriculaService } from '@frontend/data-access';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
@@ -13,13 +12,27 @@ import { finalize, forkJoin } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    CardModule,
     TableModule,
     ButtonModule,
     TagModule,
     TooltipModule
   ],
-  templateUrl: './home.component.html'
+  templateUrl: './home.component.html',
+  styles: [`
+    .student-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+
+      @media (min-width: 1200px) {
+        grid-template-columns: 3fr 2fr;
+      }
+    }
+
+    :host {
+      display: block;
+    }
+  `]
 })
 export class AlunoHomeComponent implements OnInit {
   private matriculaService = inject(MatriculaService);
@@ -28,6 +41,15 @@ export class AlunoHomeComponent implements OnInit {
   aulasDisponiveis$ = this.matriculaService.aulasDisponiveis$;
   minhasMatriculas$ = this.matriculaService.minhasMatriculas$;
   matriculando: number | null = null;
+
+  private diasSemanaMap: Record<string, string> = {
+    [DiaSemana.SEGUNDA]: 'Seg',
+    [DiaSemana.TERCA]: 'Ter',
+    [DiaSemana.QUARTA]: 'Qua',
+    [DiaSemana.QUINTA]: 'Qui',
+    [DiaSemana.SEXTA]: 'Sex',
+    [DiaSemana.SABADO]: 'Sáb'
+  };
 
   ngOnInit(): void {
     this.carregarDados();
@@ -55,7 +77,8 @@ export class AlunoHomeComponent implements OnInit {
   }
 
   formatarHorario(horario: Horario): string {
-    return `${horario.diaSemana} ${horario.horaInicio} - ${horario.horaFim}`;
+    const dia = this.diasSemanaMap[horario.diaSemana] || horario.diaSemana;
+    return `${dia} ${horario.horaInicio} - ${horario.horaFim}`;
   }
 
   getTooltip(aula: AulaDisponivel): string {

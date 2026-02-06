@@ -1,14 +1,42 @@
-<h1 style="background: navy; color: white; margin: 0; padding: 10px;">Portal Unifor - Debug</h1>
 <div class="layout-wrapper">
-  <p-menubar [model]="items">
-    <ng-template pTemplate="start">
-      <img src="https://www.unifor.br/documents/logo_unifor.png" height="40" class="mr-2" alt="Logo Unifor">
-    </ng-template>
-  </p-menubar>
-  
-  <main class="p-4 overflow-auto" style="height: calc(100vh - 70px);">
+  <div class="layout-topbar">
+    <p-menubar [model]="items">
+      <ng-template pTemplate="start">
+        <a routerLink="/" class="brand-logo">
+          <div class="brand-icon">
+            <i class="pi pi-graduation-cap"></i>
+          </div>
+          <span class="brand-text">Portal Unifor</span>
+        </a>
+      </ng-template>
+      <ng-template pTemplate="end">
+        <div class="user-section">
+          <div class="user-greeting">
+            <span class="user-name">{{ userName }}</span>
+            <span class="user-role">{{ userRole }}</span>
+          </div>
+          <p-avatar
+            [label]="userInitial"
+            shape="circle"
+            [style]="{ 'background-color': '#3b82f6', color: '#ffffff', 'font-weight': '600' }"
+          ></p-avatar>
+          <p-button
+            icon="pi pi-sign-out"
+            [rounded]="true"
+            [text]="true"
+            severity="secondary"
+            (click)="logout()"
+            pTooltip="Sair"
+            tooltipPosition="bottom"
+          ></p-button>
+        </div>
+      </ng-template>
+    </p-menubar>
+  </div>
+
+  <main class="layout-main">
     <router-outlet></router-outlet>
   </main>
 
-  <p-toast></p-toast>
+  <p-toast position="top-right"></p-toast>
 </div>

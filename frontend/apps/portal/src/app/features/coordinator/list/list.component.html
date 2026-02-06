@@ -1,111 +1,311 @@
-<div class="card" data-testid="coordinator-page">
-    <div class="flex justify-content-between align-items-center mb-4">
-        <h2 class="m-0" data-testid="page-title">Gestão da Matriz Curricular</h2>
-        <p-button label="Nova Aula" icon="pi pi-plus" (click)="showDialog()" data-testid="new-class-button"></p-button>
-    </div>
+<div class="fade-in-up" data-testid="coordinator-page">
 
-    <div [formGroup]="filtroForm" class="flex gap-3 mb-4 p-3 surface-ground border-round">
-        <div class="flex flex-column gap-1">
-            <label for="periodo" class="font-bold">Período</label>
-            <p-select id="periodo" [options]="periodos" formControlName="periodo" placeholder="Todos" [showClear]="true"></p-select>
-        </div>
-        <div class="flex flex-column gap-1">
-            <label for="cursoId" class="font-bold">Curso</label>
-            <p-select id="cursoId" [options]="(cursos$ | async) || []" formControlName="cursoId" optionLabel="nome" optionValue="id" placeholder="Todos" [showClear]="true"></p-select>
-        </div>
-        <div class="flex flex-column gap-1">
-            <label for="maxAlunosMin" class="font-bold">Vagas (mín)</label>
-            <p-inputNumber id="maxAlunosMin" formControlName="maxAlunosMin" [min]="1" placeholder="Mínimo" [showClear]="true"></p-inputNumber>
-        </div>
-        <div class="flex flex-column gap-1">
-            <label for="maxAlunosMax" class="font-bold">Vagas (máx)</label>
-            <p-inputNumber id="maxAlunosMax" formControlName="maxAlunosMax" [min]="1" placeholder="Máximo" [showClear]="true"></p-inputNumber>
-        </div>
-    </div>
+  <div class="page-header">
+    <h2>
+      <i class="pi pi-objects-column" style="color: #3b82f6;"></i>
+      Gestão da Matriz Curricular
+    </h2>
+    <p-button
+      label="Nova Aula"
+      icon="pi pi-plus"
+      (click)="showDialog()"
+      data-testid="new-class-button"
+    ></p-button>
+  </div>
 
-    <p-table [value]="(matrizes$ | async) || []" [loading]="loading" styleClass="p-datatable-striped" data-testid="class-table">
+  <div class="filter-section fade-in-up stagger-1">
+    <div [formGroup]="filtroForm" class="filter-grid">
+      <div class="filter-field">
+        <label for="periodo">Período</label>
+        <p-select
+          id="periodo"
+          [options]="periodos"
+          formControlName="periodo"
+          placeholder="Todos"
+          [showClear]="true"
+        ></p-select>
+      </div>
+      <div class="filter-field">
+        <label for="cursoId">Curso</label>
+        <p-select
+          id="cursoId"
+          [options]="(cursos$ | async) || []"
+          formControlName="cursoId"
+          optionLabel="nome"
+          optionValue="id"
+          placeholder="Todos"
+          [showClear]="true"
+        ></p-select>
+      </div>
+      <div class="filter-field">
+        <label for="maxAlunosMin">Vagas (mín)</label>
+        <p-inputNumber
+          id="maxAlunosMin"
+          formControlName="maxAlunosMin"
+          [min]="1"
+          placeholder="Mínimo"
+          [showClear]="true"
+        ></p-inputNumber>
+      </div>
+      <div class="filter-field">
+        <label for="maxAlunosMax">Vagas (máx)</label>
+        <p-inputNumber
+          id="maxAlunosMax"
+          formControlName="maxAlunosMax"
+          [min]="1"
+          placeholder="Máximo"
+          [showClear]="true"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-card fade-in-up stagger-2">
+
+    <div class="desktop-table">
+      <p-table
+        [value]="(matrizes$ | async) || []"
+        [loading]="loading"
+        styleClass="p-datatable-striped"
+        data-testid="class-table"
+      >
         <ng-template pTemplate="header">
-            <tr>
-                <th>Disciplina</th>
-                <th>Professor</th>
-                <th>Horário</th>
-                <th>Vagas</th>
-                <th>Cursos Autorizados</th>
-                <th>Ações</th>
-            </tr>
+          <tr>
+            <th>Disciplina</th>
+            <th>Professor</th>
+            <th>Horário</th>
+            <th>Vagas</th>
+            <th>Cursos</th>
+            <th style="width: 100px; text-align: center;">Ações</th>
+          </tr>
         </ng-template>
         <ng-template pTemplate="body" let-matriz>
-            <tr>
-                <td>{{ matriz.disciplina.nome }}</td>
-                <td>{{ matriz.professor.nome }}</td>
-                <td>{{ matriz.horario.diaSemana }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}</td>
-                <td>
-                    <span [class]="matriz.vagasDisponiveis > 0 ? 'text-green-500' : 'text-red-500 font-bold'">
-                        {{ matriz.vagasDisponiveis }} / {{ matriz.maxAlunos }}
-                    </span>
-                </td>
-                <td>
-                    <div class="flex flex-wrap gap-1">
-                        @for (c of matriz.cursosAutorizados; track c.id) {
-                            <span class="text-xs p-1 surface-200 border-round">{{ c.codigo }}</span>
-                        }
-                    </div>
-                </td>
-                <td>
-                    <div class="flex gap-1">
-                        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (click)="editar(matriz)"></p-button>
-                        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (click)="confirmarExclusao(matriz)"></p-button>
-                    </div>
-                </td>
-            </tr>
+          <tr>
+            <td>
+              <span class="font-semibold">{{ matriz.disciplina.nome }}</span>
+            </td>
+            <td>{{ matriz.professor.nome }}</td>
+            <td>
+              <div class="flex align-items-center gap-2">
+                <i class="pi pi-clock text-color-secondary" style="font-size: 0.875rem;"></i>
+                {{ formatDiaSemana(matriz.horario.diaSemana) }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}
+              </div>
+            </td>
+            <td>
+              <span class="vagas-badge" [class.disponivel]="matriz.vagasDisponiveis > 0" [class.esgotado]="matriz.vagasDisponiveis === 0">
+                <i class="pi" [class.pi-check-circle]="matriz.vagasDisponiveis > 0" [class.pi-times-circle]="matriz.vagasDisponiveis === 0" style="font-size: 0.75rem;"></i>
+                {{ matriz.vagasDisponiveis }} / {{ matriz.maxAlunos }}
+              </span>
+            </td>
+            <td>
+              <div class="flex flex-wrap gap-1">
+                @for (c of matriz.cursosAutorizados; track c.id) {
+                  <span class="curso-badge">{{ c.codigo }}</span>
+                }
+              </div>
+            </td>
+            <td>
+              <div class="flex gap-1 justify-content-center">
+                <p-button
+                  icon="pi pi-pencil"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="info"
+                  (click)="editar(matriz)"
+                  pTooltip="Editar"
+                  tooltipPosition="top"
+                ></p-button>
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="danger"
+                  (click)="confirmarExclusao(matriz)"
+                  pTooltip="Excluir"
+                  tooltipPosition="top"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-            <tr>
-                <td colspan="6" class="text-center p-4">Nenhuma aula encontrada para os filtros selecionados.</td>
-            </tr>
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <i class="pi pi-search"></i>
+                </div>
+                <p class="empty-state-title">Nenhuma aula encontrada</p>
+                <p class="empty-state-text">Tente ajustar os filtros ou crie uma nova aula.</p>
+              </div>
+            </td>
+          </tr>
         </ng-template>
-    </p-table>
+      </p-table>
+    </div>
+
+    <div class="mobile-card-list">
+      @if (loading) {
+        <div class="flex justify-content-center p-4">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #3b82f6;"></i>
+        </div>
+      }
+      @for (matriz of (matrizes$ | async) || []; track matriz.id) {
+        <div class="mobile-card-item">
+          <div class="mobile-card-title">{{ matriz.disciplina.nome }}</div>
+          <div class="mobile-card-field">
+            <span class="field-label">Professor</span>
+            <span class="field-value">{{ matriz.professor.nome }}</span>
+          </div>
+          <div class="mobile-card-field">
+            <span class="field-label">Horário</span>
+            <span class="field-value">
+              {{ formatDiaSemana(matriz.horario.diaSemana) }} {{ matriz.horario.horaInicio }} - {{ matriz.horario.horaFim }}
+            </span>
+          </div>
+          <div class="mobile-card-field">
+            <span class="field-label">Vagas</span>
+            <span class="field-value">
+              <span class="vagas-badge" [class.disponivel]="matriz.vagasDisponiveis > 0" [class.esgotado]="matriz.vagasDisponiveis === 0">
+                {{ matriz.vagasDisponiveis }} / {{ matriz.maxAlunos }}
+              </span>
+            </span>
+          </div>
+          <div class="mobile-card-tags">
+            @for (c of matriz.cursosAutorizados; track c.id) {
+              <span class="curso-badge">{{ c.codigo }}</span>
+            }
+          </div>
+          <div class="mobile-card-actions">
+            <p-button
+              label="Editar"
+              icon="pi pi-pencil"
+              severity="info"
+              [outlined]="true"
+              size="small"
+              (click)="editar(matriz)"
+              styleClass="flex-1"
+            ></p-button>
+            <p-button
+              label="Excluir"
+              icon="pi pi-trash"
+              severity="danger"
+              [outlined]="true"
+              size="small"
+              (click)="confirmarExclusao(matriz)"
+              styleClass="flex-1"
+            ></p-button>
+          </div>
+        </div>
+      } @empty {
+        @if (!loading) {
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="pi pi-search"></i>
+            </div>
+            <p class="empty-state-title">Nenhuma aula encontrada</p>
+            <p class="empty-state-text">Tente ajustar os filtros ou crie uma nova aula.</p>
+          </div>
+        }
+      }
+    </div>
+
+  </div>
 </div>
 
-<p-dialog [(visible)]="displayForm" [header]="editingId ? 'Editar Aula' : 'Nova Aula'" [modal]="true" [style]="{width: '450px'}" data-testid="class-dialog">
-    <form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-column gap-3 mt-3">
-        <div class="flex flex-column gap-1">
-            <label for="disciplina" class="font-bold">Disciplina</label>
-            <p-select id="disciplina" [options]="(disciplinas$ | async) || []" formControlName="disciplinaId" optionLabel="nome" optionValue="id" placeholder="Selecione" appendTo="body"></p-select>
-        </div>
+<p-dialog
+  [(visible)]="displayForm"
+  [header]="editingId ? 'Editar Aula' : 'Nova Aula'"
+  [modal]="true"
+  [style]="{ width: '95vw', 'max-width': '520px' }"
+  [breakpoints]="{ '768px': '95vw' }"
+  data-testid="class-dialog"
+>
+  <form [formGroup]="form" (ngSubmit)="salvar()" class="flex flex-column gap-3 mt-3">
+    <div class="flex flex-column gap-1">
+      <label for="disciplina" class="font-semibold text-sm">Disciplina</label>
+      <p-select
+        id="disciplina"
+        [options]="(disciplinas$ | async) || []"
+        formControlName="disciplinaId"
+        optionLabel="nome"
+        optionValue="id"
+        placeholder="Selecione uma disciplina"
+        appendTo="body"
+      ></p-select>
+    </div>
 
-        <div class="flex flex-column gap-1">
-            <label for="professor" class="font-bold">Professor</label>
-            <p-select id="professor" [options]="(professores$ | async) || []" formControlName="professorId" optionLabel="nome" optionValue="id" placeholder="Selecione" appendTo="body"></p-select>
-        </div>
+    <div class="flex flex-column gap-1">
+      <label for="professor" class="font-semibold text-sm">Professor</label>
+      <p-select
+        id="professor"
+        [options]="(professores$ | async) || []"
+        formControlName="professorId"
+        optionLabel="nome"
+        optionValue="id"
+        placeholder="Selecione um professor"
+        appendTo="body"
+      ></p-select>
+    </div>
 
-        <div class="flex flex-column gap-1">
-            <label for="horario" class="font-bold">Horário</label>
-            <p-select id="horario" [options]="(horarios$ | async) || []" formControlName="horarioId" placeholder="Selecione" appendTo="body">
-                <ng-template let-h pTemplate="item">
-                    {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
-                </ng-template>
-                <ng-template let-h pTemplate="selectedItem">
-                    {{ h.diaSemana }} {{ h.horaInicio }} - {{ h.horaFim }}
-                </ng-template>
-            </p-select>
-        </div>
+    <div class="flex flex-column gap-1">
+      <label for="horario" class="font-semibold text-sm">Horário</label>
+      <p-select
+        id="horario"
+        [options]="(horarios$ | async) || []"
+        formControlName="horarioId"
+        placeholder="Selecione um horário"
+        appendTo="body"
+      >
+        <ng-template let-h pTemplate="item">
+          {{ formatDiaSemana(h.diaSemana) }} {{ h.horaInicio }} - {{ h.horaFim }} ({{ h.periodo }})
+        </ng-template>
+        <ng-template let-h pTemplate="selectedItem">
+          {{ formatDiaSemana(h.diaSemana) }} {{ h.horaInicio }} - {{ h.horaFim }}
+        </ng-template>
+      </p-select>
+    </div>
 
-        <div class="flex flex-column gap-1">
-            <label for="maxAlunos" class="font-bold">Máximo de Alunos</label>
-            <p-inputNumber id="maxAlunos" formControlName="maxAlunos" [min]="1" showButtons="true"></p-inputNumber>
-        </div>
+    <div class="flex flex-column gap-1">
+      <label for="maxAlunos" class="font-semibold text-sm">Máximo de Alunos</label>
+      <p-inputNumber
+        id="maxAlunos"
+        formControlName="maxAlunos"
+        [min]="1"
+        showButtons="true"
+      ></p-inputNumber>
+    </div>
 
-        <div class="flex flex-column gap-1">
-            <label for="cursos" class="font-bold">Cursos Autorizados</label>
-            <p-multiSelect id="cursos" [options]="(cursos$ | async) || []" formControlName="cursosAutorizadosIds" optionLabel="nome" optionValue="id" placeholder="Selecione" appendTo="body"></p-multiSelect>
-        </div>
+    <div class="flex flex-column gap-1">
+      <label for="cursos" class="font-semibold text-sm">Cursos Autorizados</label>
+      <p-multiSelect
+        id="cursos"
+        [options]="(cursos$ | async) || []"
+        formControlName="cursosAutorizadosIds"
+        optionLabel="nome"
+        optionValue="id"
+        placeholder="Selecione os cursos"
+        appendTo="body"
+      ></p-multiSelect>
+    </div>
 
-        <div class="flex justify-content-end gap-2 mt-4">
-            <p-button label="Cancelar" severity="secondary" [text]="true" (click)="displayForm = false" data-testid="cancel-button"></p-button>
-            <p-button label="Salvar" type="submit" [disabled]="form.invalid" data-testid="save-button"></p-button>
-        </div>
-    </form>
+    <div class="flex justify-content-end gap-2 mt-4">
+      <p-button
+        label="Cancelar"
+        severity="secondary"
+        [outlined]="true"
+        (click)="displayForm = false"
+        data-testid="cancel-button"
+      ></p-button>
+      <p-button
+        label="Salvar"
+        icon="pi pi-check"
+        type="submit"
+        [disabled]="form.invalid"
+        data-testid="save-button"
+      ></p-button>
+    </div>
+  </form>
 </p-dialog>
 
 <p-confirmDialog></p-confirmDialog>

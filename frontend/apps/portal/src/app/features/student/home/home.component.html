@@ -1,81 +1,232 @@
-<div class="grid" data-testid="student-page">
-    <div class="col-12 xl:col-7">
-        <p-card header="Aulas Disponíveis para seu Curso" data-testid="available-classes-card">
-            <p-table [value]="(aulasDisponiveis$ | async) || []" styleClass="p-datatable-sm" data-testid="available-classes-table">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Disciplina</th>
-                        <th>Professor</th>
-                        <th>Horário</th>
-                        <th>Vagas</th>
-                        <th>Ação</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-aula>
-                    <tr [class.opacity-50]="!aula.podeMatricular">
-                        <td class="font-bold">{{ aula.disciplina.nome }}</td>
-                        <td>{{ aula.professor.nome }}</td>
-                        <td>{{ formatarHorario(aula.horario) }}</td>
-                        <td>
-                            <div class="flex flex-wrap gap-1 align-items-center">
-                                @if (aula.conflitaHorario) {
-                                    <p-tag severity="warn" value="Conflito de Horário"></p-tag>
-                                }
-                                @if (aula.jaMatriculado) {
-                                    <p-tag severity="info" value="Já Matriculado"></p-tag>
-                                }
-                                <p-tag [severity]="aula.vagasDisponiveis > 0 ? 'success' : 'danger'" [value]="aula.vagasDisponiveis + ' / ' + aula.maxAlunos"></p-tag>
-                            </div>
-                        </td>
-                        <td>
-                            <p-button 
-                                label="Matricular" 
-                                icon="pi pi-check"
-                                [disabled]="!aula.podeMatricular"
-                                [loading]="matriculando === aula.id"
-                                (click)="matricular(aula)"
-                                [pTooltip]="getTooltip(aula)"
-                                tooltipPosition="left"
-                                data-testid="enroll-button">
-                            </p-button>
-                        </td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="5" class="text-center p-4">Nenhuma aula disponível encontrada.</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </p-card>
-    </div>
+<div class="student-layout fade-in-up" data-testid="student-page">
 
-    <div class="col-12 xl:col-5">
-        <p-card header="Minhas Matrículas" data-testid="enrollments-card">
-            <p-table [value]="(minhasMatriculas$ | async) || []" data-testid="enrollments-table">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th>Disciplina</th>
-                        <th>Professor</th>
-                        <th>Horário</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-matricula>
-                    <tr>
-                        <td class="font-bold text-primary">{{ matricula.disciplina }}</td>
-                        <td>{{ matricula.professor }}</td>
-                        <td>{{ matricula.horario }}</td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="3" class="text-center p-4 text-500">
-                            <i class="pi pi-info-circle mr-2"></i>
-                            Você ainda não realizou nenhuma matrícula.
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </p-card>
+  <div class="section-card fade-in-up stagger-1">
+    <div class="section-card-header">
+      <div class="section-card-icon" style="background: #eff6ff; color: #3b82f6;">
+        <i class="pi pi-book"></i>
+      </div>
+      <div>
+        <h3 class="section-card-title">Aulas Disponíveis</h3>
+        <p class="section-card-subtitle">Aulas autorizadas para o seu curso</p>
+      </div>
     </div>
+    <div class="section-card-body" data-testid="available-classes-card">
+
+      <div class="desktop-table">
+        <p-table
+          [value]="(aulasDisponiveis$ | async) || []"
+          styleClass="p-datatable-sm"
+          data-testid="available-classes-table"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Disciplina</th>
+              <th>Professor</th>
+              <th>Horário</th>
+              <th>Status</th>
+              <th style="width: 140px; text-align: center;">Ação</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-aula>
+            <tr [class.opacity-60]="!aula.podeMatricular">
+              <td>
+                <span class="font-semibold">{{ aula.disciplina.nome }}</span>
+              </td>
+              <td>{{ aula.professor.nome }}</td>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-clock text-color-secondary" style="font-size: 0.8rem;"></i>
+                  {{ formatarHorario(aula.horario) }}
+                </div>
+              </td>
+              <td>
+                <div class="flex flex-wrap gap-1 align-items-center">
+                  @if (aula.conflitaHorario) {
+                    <p-tag severity="warn" value="Conflito" icon="pi pi-exclamation-triangle"></p-tag>
+                  }
+                  @if (aula.jaMatriculado) {
+                    <p-tag severity="info" value="Matriculado" icon="pi pi-check"></p-tag>
+                  }
+                  <span
+                    class="vagas-badge"
+                    [class.disponivel]="aula.vagasDisponiveis > 0"
+                    [class.esgotado]="aula.vagasDisponiveis === 0"
+                  >
+                    {{ aula.vagasDisponiveis }} / {{ aula.maxAlunos }}
+                  </span>
+                </div>
+              </td>
+              <td class="text-center">
+                <p-button
+                  label="Matricular"
+                  icon="pi pi-check"
+                  size="small"
+                  [disabled]="!aula.podeMatricular"
+                  [loading]="matriculando === aula.id"
+                  (click)="matricular(aula)"
+                  [pTooltip]="getTooltip(aula)"
+                  tooltipPosition="left"
+                  data-testid="enroll-button"
+                ></p-button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <i class="pi pi-book"></i>
+                  </div>
+                  <p class="empty-state-title">Nenhuma aula disponível</p>
+                  <p class="empty-state-text">Não há aulas autorizadas para o seu curso no momento.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="mobile-card-list">
+        @for (aula of (aulasDisponiveis$ | async) || []; track aula.id) {
+          <div class="mobile-card-item" [class.opacity-60]="!aula.podeMatricular">
+            <div class="mobile-card-title">{{ aula.disciplina.nome }}</div>
+            <div class="mobile-card-field">
+              <span class="field-label">Professor</span>
+              <span class="field-value">{{ aula.professor.nome }}</span>
+            </div>
+            <div class="mobile-card-field">
+              <span class="field-label">Horário</span>
+              <span class="field-value">{{ formatarHorario(aula.horario) }}</span>
+            </div>
+            <div class="mobile-card-field">
+              <span class="field-label">Vagas</span>
+              <span class="field-value">
+                <span
+                  class="vagas-badge"
+                  [class.disponivel]="aula.vagasDisponiveis > 0"
+                  [class.esgotado]="aula.vagasDisponiveis === 0"
+                >
+                  {{ aula.vagasDisponiveis }} / {{ aula.maxAlunos }}
+                </span>
+              </span>
+            </div>
+            <div class="mobile-card-tags">
+              @if (aula.conflitaHorario) {
+                <p-tag severity="warn" value="Conflito" icon="pi pi-exclamation-triangle"></p-tag>
+              }
+              @if (aula.jaMatriculado) {
+                <p-tag severity="info" value="Matriculado" icon="pi pi-check"></p-tag>
+              }
+            </div>
+            <div class="mobile-card-actions full-width">
+              <p-button
+                label="Matricular"
+                icon="pi pi-check"
+                [disabled]="!aula.podeMatricular"
+                [loading]="matriculando === aula.id"
+                (click)="matricular(aula)"
+                styleClass="w-full"
+                data-testid="enroll-button"
+              ></p-button>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="pi pi-book"></i>
+            </div>
+            <p class="empty-state-title">Nenhuma aula disponível</p>
+            <p class="empty-state-text">Não há aulas autorizadas para o seu curso no momento.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card fade-in-up stagger-2">
+    <div class="section-card-header">
+      <div class="section-card-icon" style="background: #f0fdf4; color: #16a34a;">
+        <i class="pi pi-bookmark-fill"></i>
+      </div>
+      <div>
+        <h3 class="section-card-title">Minhas Matrículas</h3>
+        <p class="section-card-subtitle">Disciplinas em que você está matriculado</p>
+      </div>
+    </div>
+    <div class="section-card-body" data-testid="enrollments-card">
+      <div class="desktop-table">
+        <p-table
+          [value]="(minhasMatriculas$ | async) || []"
+          data-testid="enrollments-table"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Disciplina</th>
+              <th>Professor</th>
+              <th>Horário</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-matricula>
+            <tr>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-check-circle" style="color: #16a34a; font-size: 0.875rem;"></i>
+                  <span class="font-semibold" style="color: #1e40af;">{{ matricula.disciplina }}</span>
+                </div>
+              </td>
+              <td>{{ matricula.professor }}</td>
+              <td>
+                <div class="flex align-items-center gap-2">
+                  <i class="pi pi-clock text-color-secondary" style="font-size: 0.8rem;"></i>
+                  {{ matricula.horario }}
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="3">
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <i class="pi pi-bookmark"></i>
+                  </div>
+                  <p class="empty-state-title">Nenhuma matrícula realizada</p>
+                  <p class="empty-state-text">Explore as aulas disponíveis e faça sua matrícula.</p>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="mobile-card-list">
+        @for (matricula of (minhasMatriculas$ | async) || []; track matricula.id) {
+          <div class="mobile-card-item" style="border-left: 3px solid #16a34a;">
+            <div class="mobile-card-title" style="color: #1e40af;">
+              <i class="pi pi-check-circle" style="color: #16a34a; font-size: 0.875rem; margin-right: 0.375rem;"></i>
+              {{ matricula.disciplina }}
+            </div>
+            <div class="mobile-card-field">
+              <span class="field-label">Professor</span>
+              <span class="field-value">{{ matricula.professor }}</span>
+            </div>
+            <div class="mobile-card-field">
+              <span class="field-label">Horário</span>
+              <span class="field-value">{{ matricula.horario }}</span>
+            </div>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="pi pi-bookmark"></i>
+            </div>
+            <p class="empty-state-title">Nenhuma matrícula realizada</p>
+            <p class="empty-state-text">Explore as aulas disponíveis e faça sua matrícula.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
 </div>

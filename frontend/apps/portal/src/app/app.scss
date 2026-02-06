@@ -1,0 +1,137 @@
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid #e2e8f0;
+
+  ::ng-deep .p-menubar {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    padding: 0.5rem 1.5rem;
+
+    @media (max-width: 768px) {
+      padding: 0.5rem 1rem;
+    }
+
+    .p-menubar-start {
+      margin-right: 1.5rem;
+
+      @media (max-width: 768px) {
+        margin-right: auto;
+      }
+    }
+
+    .p-menubar-end {
+      margin-left: auto;
+    }
+
+    .p-menuitem-link {
+      border-radius: 8px;
+      transition: background-color 150ms ease;
+
+      &:hover {
+        background: #f1f5f9;
+      }
+    }
+
+    .p-menuitem-text {
+      font-weight: 500;
+    }
+
+    .p-menubar-button {
+      border-radius: 8px;
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  user-select: none;
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  .user-greeting {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    line-height: 1.2;
+  }
+
+  .user-role {
+    font-size: 0.6875rem;
+    color: #94a3b8;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.layout-main {
+  flex: 1;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
+}

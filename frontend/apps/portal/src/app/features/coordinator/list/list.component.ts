@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   DadosReferenciaService,
+  DiaSemana,
   MatrizCurricular,
   MatrizFiltro,
   MatrizService,
@@ -16,19 +17,21 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    TableModule, 
-    ButtonModule, 
-    DialogModule, 
-    SelectModule, 
-    MultiSelectModule, 
+    CommonModule,
+    ReactiveFormsModule,
+    TableModule,
+    ButtonModule,
+    DialogModule,
+    SelectModule,
+    MultiSelectModule,
     InputNumberModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TooltipModule
   ],
   providers: [ConfirmationService],
   templateUrl: './list.component.html'
@@ -71,9 +74,18 @@ export class MatrizListComponent implements OnInit {
     { label: 'Noite', value: Periodo.NOITE }
   ];
 
+  private diasSemanaMap: Record<string, string> = {
+    [DiaSemana.SEGUNDA]: 'Seg',
+    [DiaSemana.TERCA]: 'Ter',
+    [DiaSemana.QUARTA]: 'Qua',
+    [DiaSemana.QUINTA]: 'Qui',
+    [DiaSemana.SEXTA]: 'Sex',
+    [DiaSemana.SABADO]: 'Sáb'
+  };
+
   ngOnInit() {
     this.refresh();
-    
+
     this.filtroForm.valueChanges.subscribe(val => {
       this.matrizService.listar(val as MatrizFiltro).subscribe();
     });
@@ -85,6 +97,10 @@ export class MatrizListComponent implements OnInit {
       next: () => this.loading = false,
       error: () => this.loading = false
     });
+  }
+
+  formatDiaSemana(dia: string): string {
+    return this.diasSemanaMap[dia] || dia;
   }
 
   showDialog() {
@@ -103,7 +119,7 @@ export class MatrizListComponent implements OnInit {
       maxAlunos: matriz.maxAlunos,
       cursosAutorizadosIds: matriz.cursosAutorizados.map(c => c.id)
     });
-    this.form.get('disciplinaId')?.disable(); // Não pode alterar disciplina
+    this.form.get('disciplinaId')?.disable();
     this.displayForm = true;
   }
 
@@ -114,14 +130,14 @@ export class MatrizListComponent implements OnInit {
     const request = {
       disciplinaId: rawValue.disciplinaId!,
       professorId: rawValue.professorId!,
-      horarioId: (typeof rawValue.horarioId === 'object' && rawValue.horarioId !== null) 
-          ? (rawValue.horarioId as any).id 
-          : rawValue.horarioId!,
+      horarioId: (typeof rawValue.horarioId === 'object' && rawValue.horarioId !== null)
+        ? (rawValue.horarioId as any).id
+        : rawValue.horarioId!,
       maxAlunos: rawValue.maxAlunos!,
       cursosAutorizadosIds: rawValue.cursosAutorizadosIds!
     };
 
-    const obs = this.editingId 
+    const obs = this.editingId
       ? this.matrizService.atualizar(this.editingId, request)
       : this.matrizService.criar(request);
 
