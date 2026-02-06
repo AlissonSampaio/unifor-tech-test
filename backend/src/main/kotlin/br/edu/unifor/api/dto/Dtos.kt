@@ -55,7 +55,7 @@ data class MatrizFiltroRequest(
 data class MatriculaRequest(
     @field:NotNull(message = "ID da aula é obrigatório")
     @Schema(description = "ID da aula na matriz curricular", example = "1")
-    val matrizCurricularId: Long?
+    val matrizCurricularId: Long? = null
 )
 
 data class MatriculaResponse(
