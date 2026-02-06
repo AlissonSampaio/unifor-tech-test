@@ -31,7 +31,7 @@ describe('MatriculaService', () => {
       expect(aulas[0].disciplina.nome).toBe('Algoritmos');
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/aluno/aulas-disponiveis');
+    const req = httpMock.expectOne('/api/aluno/aulas-disponiveis');
     expect(req.request.method).toBe('GET');
     req.flush(mockAulas);
 
@@ -47,7 +47,7 @@ describe('MatriculaService', () => {
       expect(res).toEqual(mockMatricula);
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/aluno/matriculas');
+    const req = httpMock.expectOne('/api/aluno/matriculas');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ matrizCurricularId: 1 });
     req.flush(mockMatricula);

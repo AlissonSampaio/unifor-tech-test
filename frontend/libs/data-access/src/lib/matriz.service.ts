@@ -1,12 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, switchMap, tap, throwError } from 'rxjs';
 import { MatrizCurricular, MatrizCurricularRequest, MatrizFiltro } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class MatrizService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/matriz';
+  private apiUrl = '/api/matriz';
 
   private matrizesSubject = new BehaviorSubject<MatrizCurricular[]>([]);
   matrizes$ = this.matrizesSubject.asObservable();
@@ -30,27 +30,23 @@ export class MatrizService {
 
   criar(request: MatrizCurricularRequest): Observable<MatrizCurricular> {
     return this.http.post<MatrizCurricular>(this.apiUrl, request).pipe(
-      tap(() => this.refresh()),
+      switchMap((created) => this.listar().pipe(map(() => created))),
       catchError(this.handleError)
     );
   }
 
   atualizar(id: number, request: MatrizCurricularRequest): Observable<MatrizCurricular> {
     return this.http.put<MatrizCurricular>(`${this.apiUrl}/${id}`, request).pipe(
-      tap(() => this.refresh()),
+      switchMap((updated) => this.listar().pipe(map(() => updated))),
       catchError(this.handleError)
     );
   }
 
   excluir(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.refresh()),
+      switchMap(() => this.listar().pipe(map(() => void 0))),
       catchError(this.handleError)
     );
-  }
-
-  private refresh(): void {
-    this.listar().subscribe();
   }
 
   private handleError(error: any) {

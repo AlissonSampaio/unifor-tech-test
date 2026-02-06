@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@frontend/auth';
 import { MenuItem, MessageService } from 'primeng/api';
@@ -27,6 +28,7 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class App implements OnInit {
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   items: MenuItem[] = [];
   userName = '';
@@ -55,7 +57,9 @@ export class App implements OnInit {
       this.userRole = 'Aluno';
     }
 
-    this.authService.userProfile$.subscribe({
+    this.authService.userProfile$.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (profile) => {
         const name =
           profile?.firstName ||
