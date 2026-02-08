@@ -44,6 +44,10 @@ class MatrizCurricularService {
             throw ConflictException("Já existe uma aula desta disciplina neste horário")
         }
 
+        if (repository.existsByProfessorAndHorario(professor.id!!, horario.id!!)) {
+            throw ConflictException("Este professor já possui uma aula neste horário")
+        }
+
         val cursos =
                 request.cursosAutorizadosIds.map { cursoId ->
                     val curso =
@@ -130,6 +134,11 @@ class MatrizCurricularService {
                         )
         ) {
             throw ConflictException("Já existe uma aula desta disciplina neste horário")
+        }
+        
+        if ((matriz.professor.id != professor.id || matriz.horario.id != horario.id) &&
+            repository.existsByProfessorAndHorario(professor.id!!, horario.id!!, id)) {
+            throw ConflictException("Este professor já possui uma aula neste horário")
         }
 
         val novosCursos =

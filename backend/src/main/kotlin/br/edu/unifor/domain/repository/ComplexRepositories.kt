@@ -45,7 +45,7 @@ class MatrizCurricularRepository : PanacheRepository<MatrizCurricular> {
             params["maxAlunosMax"] = maxAlunosMax
         }
         if (!coordenadorCursosIds.isNullOrEmpty()) {
-            query.append(" AND EXISTS (SELECT 1 FROM MatrizCurricular m2 JOIN m2.cursosAutorizados ca WHERE m2.id = id AND ca.id IN :coordCursosIds)")
+            query.append(" AND id IN (SELECT m.id FROM MatrizCurricular m JOIN m.cursosAutorizados ca WHERE ca.id IN :coordCursosIds)")
             params["coordCursosIds"] = coordenadorCursosIds
         }
 
@@ -57,6 +57,14 @@ class MatrizCurricularRepository : PanacheRepository<MatrizCurricular> {
             count("disciplina.id = ?1 AND horario.id = ?2 AND deleted = false AND id != ?3", disciplinaId, horarioId, excludeId) > 0
         } else {
             count("disciplina.id = ?1 AND horario.id = ?2 AND deleted = false", disciplinaId, horarioId) > 0
+        }
+    }
+
+    fun existsByProfessorAndHorario(professorId: Long, horarioId: Long, excludeId: Long? = null): Boolean {
+        return if (excludeId != null) {
+            count("professor.id = ?1 AND horario.id = ?2 AND deleted = false AND id != ?3", professorId, horarioId, excludeId) > 0
+        } else {
+            count("professor.id = ?1 AND horario.id = ?2 AND deleted = false", professorId, horarioId) > 0
         }
     }
 

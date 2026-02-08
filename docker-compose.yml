@@ -48,6 +48,8 @@ services:
       QUARKUS_PROFILE: prod
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/matriz_curricular
       QUARKUS_OIDC_AUTH_SERVER_URL: http://keycloak:8080/realms/unifor
+      QUARKUS_HIBERNATE_ORM_DATABASE_GENERATION: drop-and-create
+      QUARKUS_HIBERNATE_ORM_SQL_LOAD_SCRIPT: import.sql
     depends_on:
       keycloak:
         condition: service_healthy

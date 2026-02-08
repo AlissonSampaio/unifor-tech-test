@@ -1,6 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
-import { from, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+
+interface UserProfile {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,8 +17,15 @@ export class AuthService {
     return of(!!this.keycloak.authenticated);
   }
 
-  get userProfile$(): Observable<any> {
-    return from(this.keycloak.loadUserProfile());
+  get userProfile$(): Observable<UserProfile> {
+    const tokenParsed = this.keycloak.tokenParsed;
+    const profile: UserProfile = {
+      firstName: tokenParsed?.['given_name'] || tokenParsed?.['name'],
+      lastName: tokenParsed?.['family_name'],
+      username: tokenParsed?.['preferred_username'],
+      email: tokenParsed?.['email'],
+    };
+    return of(profile);
   }
 
   get roles(): string[] {

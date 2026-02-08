@@ -42,14 +42,24 @@ describe('MatriculaService', () => {
 
   it('should call post when realizing enrollment', () => {
     const mockMatricula = { id: 100, disciplina: 'Algoritmos' } as any;
+    const mockAulas = [{ id: 1 }] as any;
+    const mockMatriculas = [mockMatricula] as any;
 
     service.realizarMatricula(1).subscribe(res => {
       expect(res).toEqual(mockMatricula);
     });
 
-    const req = httpMock.expectOne('/api/aluno/matriculas');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ matrizCurricularId: 1 });
-    req.flush(mockMatricula);
+    const postReq = httpMock.expectOne('/api/aluno/matriculas');
+    expect(postReq.request.method).toBe('POST');
+    expect(postReq.request.body).toEqual({ matrizCurricularId: 1 });
+    postReq.flush(mockMatricula);
+
+    const aulasReq = httpMock.expectOne('/api/aluno/aulas-disponiveis');
+    expect(aulasReq.request.method).toBe('GET');
+    aulasReq.flush(mockAulas);
+
+    const matriculasReq = httpMock.expectOne('/api/aluno/matriculas');
+    expect(matriculasReq.request.method).toBe('GET');
+    matriculasReq.flush(mockMatriculas);
   });
 });
