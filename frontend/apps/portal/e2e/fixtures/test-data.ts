@@ -19,7 +19,7 @@ export const ROUTES = {
 
 export const PAGE_TITLES = {
   coordinator: 'Gestão da Matriz Curricular',
-  studentAvailableClasses: 'Aulas Disponíveis para seu Curso',
+  studentAvailableClasses: 'Aulas Disponíveis',
   studentEnrollments: 'Minhas Matrículas',
 } as const;
 
@@ -36,9 +36,9 @@ export const DIALOG_TITLES = {
 } as const;
 
 export const MESSAGES = {
-  emptyClassList: 'Nenhuma aula encontrada para os filtros selecionados.',
-  emptyAvailableClasses: 'Nenhuma aula disponível encontrada.',
-  emptyEnrollments: 'Você ainda não realizou nenhuma matrícula.',
+  emptyClassList: 'Nenhuma aula encontrada',
+  emptyAvailableClasses: 'Nenhuma aula disponível',
+  emptyEnrollments: 'Nenhuma matrícula realizada',
 } as const;
 
 export const TIMEOUTS = {

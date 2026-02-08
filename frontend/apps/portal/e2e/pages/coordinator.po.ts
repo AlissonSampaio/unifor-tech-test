@@ -43,8 +43,8 @@ export class CoordinatorPage {
     this.cursoFilter = page.locator('p-select[formcontrolname="cursoId"]');
     this.vagasMinFilter = page.locator('p-inputnumber[formcontrolname="maxAlunosMin"]');
     this.vagasMaxFilter = page.locator('p-inputnumber[formcontrolname="maxAlunosMax"]');
-    this.editButtons = page.locator('p-button[icon="pi pi-pencil"]');
-    this.deleteButtons = page.locator('p-button[icon="pi pi-trash"]');
+    this.editButtons = this.classTable.locator('p-button[icon="pi pi-pencil"]');
+    this.deleteButtons = this.classTable.locator('p-button[icon="pi pi-trash"]');
     this.confirmDialogContent = page.locator('.p-confirmdialog');
   }
 
@@ -123,6 +123,8 @@ export class CoordinatorPage {
   }
 
   async submitForm() {
+    await this.page.keyboard.press('Escape');
+    await this.page.locator('.p-overlay').first().waitFor({ state: 'hidden', timeout: 2000 }).catch(() => {});
     await this.saveButton.click();
   }
 

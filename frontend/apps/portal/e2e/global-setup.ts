@@ -17,7 +17,8 @@ setup('authenticate as coordinator', async ({ page }) => {
   await page.locator('#username').fill(TEST_USERS.coordinator.username);
   await page.locator('#password').fill(TEST_USERS.coordinator.password);
   await page.locator('#kc-login').click();
-  await page.waitForURL(/localhost:4200/, { timeout: 30000 });
+  const port = process.env['E2E_PORT'] || '4200';
+  await page.waitForURL(new RegExp(`localhost:${port}`), { timeout: 30000 });
   await expect(page.locator('app-root')).toBeVisible({ timeout: 15000 });
   await page.context().storageState({ path: coordinatorAuthFile });
 });
@@ -32,7 +33,8 @@ setup('authenticate as student', async ({ page }) => {
   await page.locator('#username').fill(TEST_USERS.student.username);
   await page.locator('#password').fill(TEST_USERS.student.password);
   await page.locator('#kc-login').click();
-  await page.waitForURL(/localhost:4200/, { timeout: 30000 });
+  const port = process.env['E2E_PORT'] || '4200';
+  await page.waitForURL(new RegExp(`localhost:${port}`), { timeout: 30000 });
   await expect(page.locator('app-root')).toBeVisible({ timeout: 15000 });
   await page.context().storageState({ path: studentAuthFile });
 });

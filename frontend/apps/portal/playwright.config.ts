@@ -2,7 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';
 
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4200';
+const e2ePort = process.env['E2E_PORT'] || '4200';
+const baseURL = process.env['BASE_URL'] || `http://localhost:${e2ePort}`;
 
 export default defineConfig({
   ...nxE2EPreset(__filename, { testDir: './e2e' }),
@@ -23,8 +24,8 @@ export default defineConfig({
     navigationTimeout: 30000,
   },
   webServer: {
-    command: 'npx nx serve portal',
-    url: 'http://localhost:4200',
+    command: `npx nx serve portal --port=${e2ePort}`,
+    url: baseURL,
     reuseExistingServer: !process.env['CI'],
     cwd: workspaceRoot,
     timeout: 120000,

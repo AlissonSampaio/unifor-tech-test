@@ -4,7 +4,6 @@ import br.edu.unifor.api.dto.MatrizCurricularRequest
 import br.edu.unifor.api.dto.MatrizFiltroRequest
 import br.edu.unifor.application.exception.BusinessException
 import br.edu.unifor.application.exception.ConflictException
-import br.edu.unifor.application.exception.ConflictException
 import br.edu.unifor.application.service.MatrizCurricularService
 import br.edu.unifor.domain.model.*
 import br.edu.unifor.domain.repository.*

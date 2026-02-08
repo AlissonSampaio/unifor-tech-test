@@ -22,8 +22,8 @@ export class StudentPage {
     this.enrollmentsTable = page.locator('[data-testid="enrollments-table"]');
     this.enrollmentsRows = this.enrollmentsTable.locator('tbody tr');
     this.enrollButtons = page.locator('[data-testid="enroll-button"]');
-    this.scheduleConflictTags = page.locator('p-tag', { hasText: 'Conflito de Horário' });
-    this.alreadyEnrolledTags = page.locator('p-tag', { hasText: 'Já Matriculado' });
+    this.scheduleConflictTags = page.locator('p-tag', { hasText: 'Conflito' });
+    this.alreadyEnrolledTags = page.locator('p-tag', { hasText: 'Matriculado' });
   }
 
   async goto() {
@@ -94,13 +94,13 @@ export class StudentPage {
 
   async hasScheduleConflict(index = 0): Promise<boolean> {
     const row = this.availableClassesRows.nth(index);
-    const conflictTag = row.locator('p-tag', { hasText: 'Conflito de Horário' });
+    const conflictTag = row.locator('p-tag', { hasText: 'Conflito' });
     return await conflictTag.isVisible().catch(() => false);
   }
 
   async isAlreadyEnrolled(index = 0): Promise<boolean> {
     const row = this.availableClassesRows.nth(index);
-    const enrolledTag = row.locator('p-tag', { hasText: 'Já Matriculado' });
+    const enrolledTag = row.locator('p-tag', { hasText: 'Matriculado' });
     return await enrolledTag.isVisible().catch(() => false);
   }
 

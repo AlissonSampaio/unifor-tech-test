@@ -21,8 +21,8 @@ test.describe('Student - Enrollment Page', () => {
 
       await expect(studentPage.availableClassesCard).toBeVisible();
       await expect(studentPage.myEnrollmentsCard).toBeVisible();
-      await expect(page.locator('p-card', { hasText: PAGE_TITLES.studentAvailableClasses })).toBeVisible();
-      await expect(page.locator('p-card', { hasText: PAGE_TITLES.studentEnrollments })).toBeVisible();
+      await expect(page.locator('[data-testid="student-page"]', { hasText: PAGE_TITLES.studentAvailableClasses })).toBeVisible();
+      await expect(page.locator('[data-testid="student-page"]', { hasText: PAGE_TITLES.studentEnrollments })).toBeVisible();
     });
 
     test('should display both tables', async ({ page }) => {
@@ -80,7 +80,8 @@ test.describe('Student - Enrollment Page', () => {
       const studentPage = new StudentPage(page);
       await studentPage.goto();
 
-      await expect(studentPage.enrollButtons).toHaveCount(MOCK_AULAS_DISPONIVEIS.length);
+      const tableEnrollButtons = studentPage.availableClassesTable.locator('[data-testid="enroll-button"]');
+      await expect(tableEnrollButtons).toHaveCount(MOCK_AULAS_DISPONIVEIS.length);
     });
 
     test('should show vacancy tags for classes', async ({ page }) => {
