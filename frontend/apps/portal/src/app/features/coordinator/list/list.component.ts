@@ -60,7 +60,7 @@ export class MatrizListComponent implements OnInit {
     disciplinaId: [null as number | null, Validators.required],
     professorId: [null as number | null, Validators.required],
     horarioId: [null as number | null, Validators.required],
-    maxAlunos: [30, [Validators.required, Validators.min(1)]],
+    maxAlunos: [30, [Validators.required, Validators.min(1), Validators.max(1000)]],
     cursosAutorizadosIds: [[] as number[], Validators.required]
   });
 
@@ -149,6 +149,8 @@ export class MatrizListComponent implements OnInit {
       message: `Deseja realmente excluir a aula de ${matriz.disciplina.nome}?`,
       header: 'Confirmação',
       icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim',
+      rejectLabel: 'Não',
       accept: () => {
         this.matrizService.excluir(matriz.id).subscribe({
           next: () => this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Excluído com sucesso' }),

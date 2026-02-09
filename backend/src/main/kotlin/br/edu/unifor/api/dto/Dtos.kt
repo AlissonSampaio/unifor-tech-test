@@ -20,6 +20,7 @@ data class MatrizCurricularRequest(
     val horarioId: Long? = null,
     
     @field:Min(value = 1, message = "Máximo de alunos deve ser pelo menos 1")
+    @field:Max(value = 1000, message = "Máximo de alunos não pode exceder 1000")
     @Schema(description = "Número máximo de alunos permitidos", example = "30")
     val maxAlunos: Int = 30,
     

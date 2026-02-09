@@ -51,6 +51,6 @@ export class MatrizService {
 
   private handleError(error: any) {
     console.error('An error occurred:', error);
-    return throwError(() => new Error(error.error?.message || 'Server error'));
+    return throwError(() => new Error(error.error?.message || 'Erro no servidor'));
   }
 }
